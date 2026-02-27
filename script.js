@@ -558,11 +558,11 @@ function initMemoryList() {
         `;
     }).join('');
     
-    // FIXED: Set initial scroll position to show the first set (middle)
+    // Set initial scroll position to ORIGINAL (middle) set
     const singleSetHeight = CONFIG.memories.length * itemHeight;
-    // Start at position 0 to show items immediately
-    scrollPosition = 0;
-    scrollContent.style.transform = `translateY(0px)`;
+    
+    scrollPosition = -singleSetHeight;   // center on real items
+    scrollContent.style.transform = `translateY(${scrollPosition}px)`;
     
     // Add scroll event listener
     const scrollContainer = document.getElementById('memory-scroll');
@@ -629,12 +629,11 @@ function updateScroll() {
     const totalContentHeight = scrollContent.scrollHeight;
     
     // If scrolled past the end, wrap to beginning
-    if (scrollPosition < -singleSetHeight * 2 + 100) {
+    if (scrollPosition < -singleSetHeight * 2) {
         scrollPosition += singleSetHeight;
     }
     
-    // If scrolled before the beginning, wrap to end
-    if (scrollPosition > 100) {
+    if (scrollPosition > 0) {
         scrollPosition -= singleSetHeight;
     }
     
