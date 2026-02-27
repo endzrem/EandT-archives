@@ -603,12 +603,6 @@ function initMemoryList() {
                 clearProps: 'opacity,transform,translate,rotate,scale'
             }
         );
-    } else {
-        // If GSAP didn't load for some reason, make sure items are visible
-        items.forEach(el => {
-            el.style.opacity = '1';
-            el.style.transform = 'none';
-        });
     }
 
 function handleScroll(e) {
