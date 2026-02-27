@@ -581,28 +581,35 @@ function initMemoryList() {
         }, { passive: true });
     }
     
-    // Add hover listeners to items
-    const items = scrollContent.querySelectorAll('.memory-item');
-    items.forEach(item => {
-        item.addEventListener('mouseenter', handleItemHover);
-        item.addEventListener('mouseleave', handleItemLeave);
-    });
+        // Add hover listeners to items
+        const items = scrollContent.querySelectorAll('.memory-item');
+        items.forEach(item => {
+            item.addEventListener('mouseenter', handleItemHover);
+            item.addEventListener('mouseleave', handleItemLeave);
+        });
     
-    // Animate items AFTER they exist in the DOM (GUARDED)
-    if (window.gsap) {
-        gsap.fromTo(
-            '#memory-scroll-content .memory-item',
-            { x: 30, opacity: 0 },
-            {
-                x: 0,
-                opacity: 1,
-                duration: 0.5,
-                stagger: 0.05,
-                ease: 'power3.out',
-                delay: 0.1,
-                clearProps: 'opacity,transform,translate,rotate,scale'
-            }
-        );
+        // Animate items AFTER they exist in the DOM (GUARDED)
+        if (window.gsap) {
+            gsap.fromTo(
+                '#memory-scroll-content .memory-item',
+                { x: 30, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.5,
+                    stagger: 0.05,
+                    ease: 'power3.out',
+                    delay: 0.1,
+                    clearProps: 'opacity,transform,translate,rotate,scale'
+                }
+            );
+        } else {
+            // Fallback: show items even if GSAP fails to load
+            items.forEach(el => {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+        }
     }
 
 function handleScroll(e) {
