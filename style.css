@@ -411,7 +411,7 @@ body {
     top: 350px;
     transform: none;
     width: 360px;
-    height: 700px;
+    height: 500px;
 
     /* 🔑 KEY FIX */
     z-index: 999;
