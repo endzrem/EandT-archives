@@ -88,7 +88,7 @@ let isScrolling = false;
 let scrollAnimationId = null;
 const itemHeight = 58; // Height of each memory item + margin
 const scrollFriction = 0.95;
-const scrollSpeed = 0.1;
+const scrollSpeed = 0.02;
 
 // Audio
 let bgMusic = null;
