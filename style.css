@@ -387,7 +387,6 @@ body {
     transform: translateY(-50%);
     width: 340px;
     height: 600px;
-    height: 600px;
     max-height: calc(100vh - 200px);
     z-index: 20;
     background: var(--bg-card);
