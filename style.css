@@ -1162,6 +1162,3 @@ body {
     background: rgba(201, 169, 98, 0.22);
     border-color: #c9a962;
 }
-.memory-item.active .memory-title {
-    text-shadow: 0 0 8px rgba(201, 169, 98, 0.6);
-}
