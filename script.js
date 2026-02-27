@@ -237,6 +237,9 @@ function initThreeJS() {
     
     // Start animation loop
     animate();
+
+    // ⭐ FAILSAFE — tampilkan halaman walau texture gagal
+    setTimeout(hideLoadingScreen, 3000);
 }
 
 function createCube() {
@@ -244,7 +247,6 @@ function createCube() {
     
     // Load textures for each face
     const textureLoader = new THREE.TextureLoader();
-    totalTextures = 6;
     
     // Create materials array (6 faces)
     // Order: right, left, top, bottom, front, back
@@ -256,6 +258,7 @@ function createCube() {
         CONFIG.memories[4].image, // front - face 4
         CONFIG.memories[0].image  // back - fallback to first
     ];
+    totalTextures = faceImages.length;
     
     cubeMaterials = [];
     originalMaterials = [];
@@ -288,15 +291,23 @@ function createCube() {
             undefined,
             (error) => {
                 console.warn(`Failed to load texture: ${imagePath}`, error);
+            
                 const fallbackMaterial = new THREE.MeshStandardMaterial({
                     color: 0x1a1a1a,
                     roughness: 0.3,
                     metalness: 0.1
                 });
+            
                 cubeMaterials[index] = fallbackMaterial;
                 originalMaterials[index] = fallbackMaterial.clone();
+            
                 texturesLoaded++;
                 updateLoadingProgress();
+            
+                // ⭐ TAMBAHKAN BARIS INI
+                if (texturesLoaded === totalTextures) {
+                    setTimeout(hideLoadingScreen, 500);
+                }
             }
         );
     });
@@ -409,6 +420,37 @@ function rotateToMemory(index) {
     
     // Highlight the face
     highlightCubeFace(faceIndex);
+}
+
+function previewMemoryOnCube(index) {
+    if (!cube) return;
+
+    const memory = CONFIG.memories[index];
+    const textureLoader = new THREE.TextureLoader();
+
+    textureLoader.load(memory.image, (texture) => {
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+
+        const material = new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.3,
+            metalness: 0.1
+        });
+
+        // FRONT FACE = index 4
+        cube.material[4] = material;
+
+        // Rotate cube to front
+        gsap.to(targetRotation, {
+            x: 0,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out'
+        });
+
+        highlightCubeFace(4);
+    });
 }
 
 // ============================================
@@ -560,7 +602,7 @@ function handleItemHover(e) {
     // Rotate cube to show this memory
     isHoveringList = true;
     hoveredMemoryIndex = index;
-    rotateToMemory(index);
+    previewMemoryOnCube(index);
 }
 
 function handleItemLeave() {
