@@ -409,10 +409,10 @@ body {
 .memory-sidebar {
     position: absolute;
     left: 3rem;
-    top: 400px;
+    top: 250px;
     transform: none;
     width: 360px;
-    height: 400px;
+    height: 350px;
 
     /* 🔑 KEY FIX */
     z-index: 999;
