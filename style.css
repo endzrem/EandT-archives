@@ -415,12 +415,14 @@ body {
     max-height: 50vh;
 
     /* 🔑 KEY FIX */
-    z-index: 50;
+    z-index: 999;
+    transform: translateY(-50%) translateZ(0);  /* force compositing */
+    -webkit-transform: translateY(-50%) translateZ(0);
     isolation: isolate;
 
     background: var(--bg-card);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -1244,7 +1246,7 @@ body {
     }
 
     #cube-container {
-        width: 40px;
+        width: 400px;
         height: 400px;
     }
 
