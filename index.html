@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memories | Endrian & Tiara</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-text">Loading Memories</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-percentage">0%</div>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <!-- ============================================
+         MUSIC CUSTOMIZATION GUIDE:
+         
+         1. To replace with your own music:
+            - Add your audio file to: assets/audio/
+            - Replace the filename in the src attribute below
+            - Recommended format: MP3
+            - Recommended file size: under 5MB for fast loading
+         
+         2. Current music file: background-music.mp3
+         
+         3. To change volume: Edit script.js, search for 'audioVolume'
+         ============================================ -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="assets/audio/background-music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Music Control Button -->
+    <button id="music-toggle" class="music-control" aria-label="Toggle music">
+        <svg class="music-icon icon-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            <path d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+        </svg>
+        <svg class="music-icon icon-playing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            <path d="M15.536 8.464a5 5 0 010 7.072M19.071 4.929a10 10 0 010 14.142"/>
+        </svg>
+    </button>
+
+    <!-- Main Container -->
+    <div id="main-container" class="hidden">
+        <!-- Navigation - Simplified -->
+        <nav class="main-nav">
+            <div class="nav-left">
+                <div class="couple-names">Endrian & Tiara</div>
+                <div class="relationship-label">Our Love Story</div>
+            </div>
+            <div class="nav-right">
+                <div class="anniversary-info">
+                    <span class="anniversary-label">Mensiversary</span>
+                    <span class="anniversary-date">Month 12</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <!-- Large Typography Background -->
+            <div class="hero-typography">
+                <span class="hero-letter">L</span>
+                <span class="hero-letter">O</span>
+                <span class="hero-letter">V</span>
+                <span class="hero-letter">E</span>
+            </div>
+
+            <!-- 3D Cube Container - Visual Preview Only -->
+            <div id="cube-container"></div>
+
+            <!-- Cube Label -->
+            <div class="cube-label">
+                <span>Memory Preview</span>
+            </div>
+
+            <!-- Memory List Sidebar with Infinite Scroll -->
+            <div class="memory-sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-label">Memory Collection</span>
+                    <span class="sidebar-count" id="memory-count">05</span>
+                </div>
+                
+                <!-- Infinite Scroll Container -->
+                <div class="memory-scroll-container" id="memory-scroll">
+                    <div class="memory-scroll-content" id="memory-scroll-content">
+                        <!-- Memory items will be injected by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="progress-indicator">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">01 / 05</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote Section -->
+        <section class="quote-section">
+            <div class="quote-content">
+                <p class="quote-text">"In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine."</p>
+                <p class="quote-author">— Maya Angelou</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p class="footer-text">Made with love for our monthly anniversary</p>
+                <p class="footer-year">2025</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Transition Overlay -->
+    <div id="transition-overlay" class="hidden">
+        <div class="transition-content">
+            <div class="transition-text">Opening Memory</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
