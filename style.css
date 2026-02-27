@@ -478,10 +478,8 @@ body {
     position: relative;
     width: 100%;
     padding: 0.5rem 0;
-
     will-change: transform;
     z-index: 100;
-    transform: translateZ(0);   /* forces own rendering layer */
 }
 
 
