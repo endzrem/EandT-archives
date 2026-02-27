@@ -220,14 +220,6 @@ function animatePageEntrance() {
         delay: 0.4
     });
     
-    gsap.from('.memory-item', {
-        x: 30,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.05,
-        ease: 'power3.out',
-        delay: 0.6
-    });
 }
 
 // ============================================
@@ -595,7 +587,29 @@ function initMemoryList() {
         item.addEventListener('mouseenter', handleItemHover);
         item.addEventListener('mouseleave', handleItemLeave);
     });
-}
+    
+    // Animate items AFTER they exist in the DOM (GUARDED)
+    if (window.gsap) {
+        gsap.fromTo(
+            '#memory-scroll-content .memory-item',
+            { x: 30, opacity: 0 },
+            {
+                x: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: 'power3.out',
+                delay: 0.1,
+                clearProps: 'opacity,transform,translate,rotate,scale'
+            }
+        );
+    } else {
+        // If GSAP didn't load for some reason, make sure items are visible
+        items.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+        });
+    }
 
 function handleScroll(e) {
     e.preventDefault();
