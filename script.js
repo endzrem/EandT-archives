@@ -30,11 +30,32 @@ const CONFIG = {
     // Memory data - Add your memories here
     memories: [
         {
+            id: 'graduation-endrian',
+            title: 'Graduation Endrian 2025',
+            date: 'June 15, 2025',
+            image: 'assets/images/cube-graduation-endrian.jpg',
+            url: 'memories/graduation-endrian.html'
+        },
+        {
+            id: 'graduation-tiara',
+            title: 'Graduation Tiara 2025',
+            date: 'July 20, 2025',
+            image: 'assets/images/cube-graduation-tiara.jpg',
+            url: 'memories/graduation-tiara.html'
+        },
+        {
             id: 'first-date',
             title: 'Our First Date!',
             date: 'August 10, 2025',
             image: 'assets/images/first-date-cube.jpg',
             url: 'memories/first-date.html'
+        },
+        {
+            id: 'anniversary-dinner',
+            title: 'Anniversary Dinner',
+            date: 'September 5, 2025',
+            image: 'assets/images/cube-anniversary-dinner.jpg',
+            url: 'memories/anniversary-dinner.html'
         },
         {
             id: 'first-photo',
