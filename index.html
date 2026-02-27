@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -31,19 +31,6 @@
     </div>
 
     <!-- Background Music -->
-    <!-- ============================================
-         MUSIC CUSTOMIZATION GUIDE:
-         
-         1. To replace with your own music:
-            - Add your audio file to: assets/audio/
-            - Replace the filename in the src attribute below
-            - Recommended format: MP3
-            - Recommended file size: under 5MB for fast loading
-         
-         2. Current music file: background-music.mp3
-         
-         3. To change volume: Edit script.js, search for 'audioVolume'
-         ============================================ -->
     <audio id="bg-music" loop preload="auto">
         <source src="assets/audio/background-music.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -63,14 +50,14 @@
 
     <!-- Main Container -->
     <div id="main-container" class="hidden">
-        <!-- Navigation - Simplified -->
+        <!-- Navigation -->
         <nav class="main-nav">
             <div class="nav-left">
                 <div class="couple-names">Endrian & Tiara</div>
                 <div class="relationship-label">Our Love Story</div>
             </div>
             <div class="nav-right">
-                <!-- Live Relationship Timer -->
+                <!-- BIG Relationship Timer -->
                 <div class="relationship-timer">
                     <span class="timer-label">Together For</span>
                     <span class="timer-display" id="relationship-timer">
@@ -93,7 +80,7 @@
                 <span class="hero-letter">E</span>
             </div>
 
-            <!-- 3D Cube Container - Visual Preview Only -->
+            <!-- 3D Cube Container - BIGGER SIZE -->
             <div id="cube-container"></div>
 
             <!-- Cube Label -->
@@ -101,15 +88,15 @@
                 <span>Memory Preview</span>
             </div>
 
-            <!-- Memory List Sidebar with Infinite Scroll -->
+            <!-- Memory List Sidebar -->
             <div class="memory-sidebar">
                 <div class="sidebar-header">
                     <span class="sidebar-label">Memory Collection</span>
-                    <span class="sidebar-count" id="memory-count">10</span>
+                    <span class="sidebar-count" id="memory-count">05</span>
                 </div>
                 
-                <!-- Infinite Scroll Container -->
-                <div class="memory-scroll-container" id="memory-scroll">
+                <!-- Memory Scroll Container - FIXED -->
+                <div id="memory-scroll">
                     <div class="memory-scroll-content" id="memory-scroll-content">
                         <!-- Memory items will be injected by JavaScript -->
                     </div>
@@ -119,7 +106,7 @@
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
-                    <span class="progress-text" id="progress-text">01 / 10</span>
+                    <span class="progress-text" id="progress-text">01 / 05</span>
                 </div>
             </div>
         </section>

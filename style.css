@@ -256,38 +256,60 @@ body {
     text-align: right;
 }
 
-/* Relationship Timer Styles */
+/* ============================================
+   RELATIONSHIP TIMER - BIG ANNOUNCEMENT STYLE
+   ============================================ */
 .relationship-timer {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    background: linear-gradient(135deg, rgba(201, 169, 98, 0.15) 0%, rgba(201, 169, 98, 0.05) 100%);
+    border: 1px solid rgba(201, 169, 98, 0.3);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 30px rgba(201, 169, 98, 0.2), inset 0 0 20px rgba(201, 169, 98, 0.05);
+    animation: timerGlow 3s ease-in-out infinite;
+}
+
+@keyframes timerGlow {
+    0%, 100% { 
+        box-shadow: 0 0 30px rgba(201, 169, 98, 0.2), inset 0 0 20px rgba(201, 169, 98, 0.05);
+        border-color: rgba(201, 169, 98, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 50px rgba(201, 169, 98, 0.4), inset 0 0 30px rgba(201, 169, 98, 0.1);
+        border-color: rgba(201, 169, 98, 0.5);
+    }
 }
 
 .timer-label {
-    font-size: 0.6875rem;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    color: var(--accent-color);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
 .timer-display {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.02em;
+    text-shadow: 0 0 20px rgba(201, 169, 98, 0.5);
 }
 
 .timer-display .time-unit {
-    color: var(--text-secondary);
-    font-size: 0.6875rem;
-    margin-right: 0.25rem;
+    color: var(--accent-color);
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    font-weight: 500;
 }
 
 .timer-display .time-value {
-    color: var(--accent-color);
-    font-weight: 600;
+    color: var(--text-primary);
+    font-weight: 700;
 }
 
 /* ============================================
@@ -341,11 +363,13 @@ body {
     display: block;
 }
 
-/* 3D Cube Container - Visual Only */
+/* ============================================
+   3D CUBE CONTAINER - BIGGER SIZE
+   ============================================ */
 #cube-container {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
     z-index: 10;
     cursor: default;
     pointer-events: none;
@@ -361,7 +385,7 @@ body {
 /* Cube Label */
 .cube-label {
     position: absolute;
-    bottom: 12%;
+    bottom: 8%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.6875rem;
@@ -378,15 +402,16 @@ body {
 }
 
 /* ============================================
-   MEMORY SIDEBAR with INFINITE SCROLL
+   MEMORY SIDEBAR - FIXED VISIBILITY
    ============================================ */
 .memory-sidebar {
     position: absolute;
     right: 3rem;
     top: 50%;
     transform: translateY(-50%);
-    width: 340px;
-    height: 1200px;
+    width: 360px;
+    height: 600px;
+    max-height: calc(100vh - 200px);
     z-index: 20;
     background: var(--bg-card);
     backdrop-filter: blur(20px);
@@ -425,40 +450,38 @@ body {
     border-radius: 20px;
 }
 
-/* Infinite Scroll Container - FIXED FOR VISIBILITY */
+/* ============================================
+   MEMORY SCROLL - FIXED FOR VISIBILITY
+   ============================================ */
 #memory-scroll {
-    height: 400px;
+    flex: 1;
     overflow: hidden;
     position: relative;
-    flex: 1;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    /* Removed mask-image that was hiding content */
 }
 
 .memory-scroll-content {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
-    min-height: 100%;
     will-change: transform;
-    padding: 1rem 0;
+    padding: 0.5rem 0;
 }
 
-/* Memory List Items - FIXED FOR VISIBILITY */
+/* ============================================
+   MEMORY LIST ITEMS - HIGHLY VISIBLE
+   ============================================ */
 .memory-item {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.5rem;
     cursor: pointer;
     transition: all var(--transition-fast);
     border-radius: 12px;
     border: 1px solid transparent;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     text-decoration: none;
-    color: var(--text-primary) !important;
     position: relative;
     overflow: hidden;
 }
@@ -469,16 +492,16 @@ body {
     left: 0;
     top: 0;
     bottom: 0;
-    width: 3px;
+    width: 4px;
     background: var(--accent-color);
     opacity: 0;
     transition: opacity var(--transition-fast);
 }
 
 .memory-item:hover {
-    background: rgba(201, 169, 98, 0.12);
-    border-color: rgba(201, 169, 98, 0.4);
-    transform: translateX(6px);
+    background: rgba(201, 169, 98, 0.2);
+    border-color: rgba(201, 169, 98, 0.5);
+    transform: translateX(8px);
 }
 
 .memory-item:hover::before {
@@ -486,9 +509,9 @@ body {
 }
 
 .memory-item.active {
-    background: rgba(201, 169, 98, 0.18);
+    background: rgba(201, 169, 98, 0.25);
     border-color: var(--accent-color);
-    box-shadow: 0 0 25px rgba(201, 169, 98, 0.25);
+    box-shadow: 0 0 25px rgba(201, 169, 98, 0.3);
 }
 
 .memory-item.active::before {
@@ -496,7 +519,7 @@ body {
 }
 
 .memory-number {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--accent-color);
     font-weight: 700;
     min-width: 32px;
@@ -506,9 +529,9 @@ body {
 
 .memory-title {
     font-size: 0.9375rem;
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
     letter-spacing: 0.01em;
-    font-weight: 400;
+    font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -520,8 +543,8 @@ body {
 }
 
 .memory-item.active .memory-title {
-    color: var(--text-primary) !important;
-    font-weight: 500;
+    color: #ffffff !important;
+    font-weight: 600;
 }
 
 /* Progress Indicator */
@@ -1052,8 +1075,8 @@ body {
     }
 
     #cube-container {
-        width: 300px;
-        height: 300px;
+        width: 400px;
+        height: 400px;
     }
 
     .hero-typography {
@@ -1062,6 +1085,14 @@ body {
 
     .cube-label {
         display: none;
+    }
+
+    .relationship-timer {
+        padding: 0.75rem 1rem;
+    }
+
+    .timer-display {
+        font-size: 1.1rem;
     }
 }
 
@@ -1075,12 +1106,13 @@ body {
     }
 
     #cube-container {
-        width: 250px;
-        height: 250px;
+        width: 320px;
+        height: 320px;
     }
 
     .memory-sidebar {
         padding: 1.25rem;
+        width: 100%;
     }
 
     .memory-item {
@@ -1124,8 +1156,16 @@ body {
         padding: 4rem 1.5rem;
     }
 
+    .relationship-timer {
+        padding: 0.5rem 0.75rem;
+    }
+
     .timer-display {
-        font-size: 0.6875rem;
+        font-size: 0.9rem;
+    }
+
+    .timer-label {
+        font-size: 0.6rem;
     }
 }
 
@@ -1150,8 +1190,13 @@ body {
         padding-bottom: 0.75rem;
     }
 
+    #cube-container {
+        width: 280px;
+        height: 280px;
+    }
+
     .timer-display {
-        font-size: 0.625rem;
+        font-size: 0.8rem;
     }
 }
 

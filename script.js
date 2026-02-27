@@ -3,10 +3,8 @@
  * Three.js 3D Cube Gallery with Infinite Scroll List
  * 
  * Features:
- * - Auto-rotating cube with cinematic multi-axis motion
- * - Dynamic texture swapping on hidden faces
- * - Live relationship timer
- * - Infinite scroll memory list
+ * - Auto-rotating cube with DRAMATIC multi-axis motion (frontspin, sidespin, tilts)
+ * - Infinite scroll memory list - FIXED VISIBILITY
  * - Hover triggers cube rotation to preview memory
  * - Background music with mute toggle
  * - Smooth cinematic animations
@@ -16,20 +14,20 @@
 // CONFIGURATION - Easy to customize
 // ============================================
 const CONFIG = {
-    // Cube settings
-    cubeSize: 3.5,
-    autoRotateSpeed: 0.003,
-    hoverRotateSpeed: 0.02,
+    // Cube settings - BIGGER AND FASTER
+    cubeSize: 4.2,              // Increased from 3.5
+    autoRotateSpeed: 0.025,     // Much faster rotation (was 0.008)
+    hoverRotateSpeed: 0.08,     // Faster response (was 0.02)
     
     // Audio settings
     audioVolume: 0.3,  // 0.0 to 1.0 (30% volume)
     
-    // Relationship start time - EDIT THIS to your actual start date
+    // Relationship start date - EDIT THIS!
     // Format: Year, Month (0-11), Day, Hour, Minute, Second
-    // Default: July 27, 2025, 22:20:00 WIB (UTC+7)
-    relationshipStart: new Date(2025, 6, 27, 22, 20, 0), // Month is 0-indexed
+    // Example: July 27, 2025 at 22:20:00
+    relationshipStart: new Date(2025, 6, 27, 22, 20, 0),
     
-    // Memory data - 10 memories total
+    // Memory data - Add your memories here
     memories: [
         {
             id: 'graduation-endrian',
@@ -65,41 +63,6 @@ const CONFIG = {
             date: 'October 1, 2024',
             image: 'assets/images/cube-first-photo.jpg',
             url: 'memories/first-photo.html'
-        },
-        {
-            id: 'rainy-day',
-            title: 'Rainy Day Date',
-            date: 'November 12, 2025',
-            image: 'assets/images/cube-rainy-day.jpg',
-            url: 'memories/rainy-day.html'
-        },
-        {
-            id: 'beach-sunset',
-            title: 'Beach Sunset Walk',
-            date: 'December 3, 2025',
-            image: 'assets/images/cube-beach-sunset.jpg',
-            url: 'memories/beach-sunset.html'
-        },
-        {
-            id: 'birthday-surprise',
-            title: 'Birthday Surprise',
-            date: 'January 15, 2026',
-            image: 'assets/images/cube-birthday-surprise.jpg',
-            url: 'memories/birthday-surprise.html'
-        },
-        {
-            id: 'study-night',
-            title: 'Study Night Together',
-            date: 'February 8, 2026',
-            image: 'assets/images/cube-study-night.jpg',
-            url: 'memories/study-night.html'
-        },
-        {
-            id: 'random-tuesday',
-            title: 'Random Tuesday Happiness',
-            date: 'February 24, 2026',
-            image: 'assets/images/cube-random-tuesday.jpg',
-            url: 'memories/random-tuesday.html'
         }
     ]
 };
@@ -117,15 +80,13 @@ let texturesLoaded = 0;
 let totalTextures = 0;
 let cubeMaterials = [];
 let originalMaterials = [];
-let faceMemoryMap = [0, 1, 2, 3, 4, 5]; // Which memory is on each face
-let lastTextureChange = 0;
 
 // Infinite scroll variables
 let scrollPosition = 0;
 let scrollVelocity = 0;
 let isScrolling = false;
 let scrollAnimationId = null;
-const itemHeight = 58; // Height of each memory item + margin (increased for better visibility)
+const itemHeight = 58; // Height of each memory item + margin
 const scrollFriction = 0.95;
 const scrollSpeed = 0.4;
 
@@ -326,9 +287,9 @@ function initThreeJS() {
     // Scene
     scene = new THREE.Scene();
     
-    // Camera
+    // Camera - adjusted for bigger cube
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.z = 7;
+    camera.position.z = 8;
     
     // Renderer
     renderer = new THREE.WebGLRenderer({ 
@@ -350,7 +311,7 @@ function initThreeJS() {
     // Start animation loop
     animate();
 
-    // FAILSAFE — show page even if textures fail
+    // FAILSAFE - show page even if textures fail
     setTimeout(hideLoadingScreen, 3000);
 }
 
@@ -368,7 +329,7 @@ function createCube() {
         CONFIG.memories[2].image, // top - face 2
         CONFIG.memories[3].image, // bottom - face 3
         CONFIG.memories[4].image, // front - face 4
-        CONFIG.memories[5].image  // back - face 5
+        CONFIG.memories[0].image  // back - fallback to first
     ];
     totalTextures = faceImages.length;
     
@@ -436,9 +397,6 @@ function createCube() {
         placeholderMaterial, placeholderMaterial
     ]);
     
-    // Store face-to-memory mapping
-    cube.userData.faceMemories = [0, 1, 2, 3, 4, 5];
-    
     scene.add(cube);
     
     // Update materials once loaded
@@ -469,92 +427,6 @@ function addLighting() {
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
     rimLight.position.set(0, 0, -5);
     scene.add(rimLight);
-}
-
-// ============================================
-// DYNAMIC TEXTURE SWAPPING
-// ============================================
-function updateHiddenFaceTextures() {
-    if (!cube || !autoRotate || isHoveringList) return;
-    
-    const now = Date.now();
-    // Only change textures every 5 seconds
-    if (now - lastTextureChange < 5000) return;
-    
-    // Get current rotation to determine which faces are visible
-    const rotX = currentRotation.x % (Math.PI * 2);
-    const rotY = currentRotation.y % (Math.PI * 2);
-    
-    // Determine which faces are roughly facing the camera
-    // Front face (4) is visible when rotY is near 0 or 2*PI
-    // Back face (5) is visible when rotY is near PI
-    // Right face (0) is visible when rotY is near -PI/2 or 3*PI/2
-    // Left face (1) is visible when rotY is near PI/2
-    // Top face (2) is visible when rotX is near -PI/2
-    // Bottom face (3) is visible when rotX is near PI/2
-    
-    const normalizedRotY = ((rotY % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
-    const normalizedRotX = ((rotX % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
-    
-    // Check each face visibility and swap if hidden
-    for (let faceIndex = 0; faceIndex < 6; faceIndex++) {
-        let isVisible = false;
-        
-        switch (faceIndex) {
-            case 4: // Front
-                isVisible = normalizedRotY < Math.PI / 3 || normalizedRotY > 5 * Math.PI / 3;
-                break;
-            case 5: // Back
-                isVisible = normalizedRotY > 2 * Math.PI / 3 && normalizedRotY < 4 * Math.PI / 3;
-                break;
-            case 0: // Right
-                isVisible = normalizedRotY > 3 * Math.PI / 2 - Math.PI / 6 || normalizedRotY < Math.PI / 2 + Math.PI / 6;
-                break;
-            case 1: // Left
-                isVisible = normalizedRotY > Math.PI / 2 - Math.PI / 6 && normalizedRotY < Math.PI / 2 + Math.PI / 6;
-                break;
-            case 2: // Top
-                isVisible = normalizedRotX > 3 * Math.PI / 2 - Math.PI / 4 || normalizedRotX < Math.PI / 4;
-                break;
-            case 3: // Bottom
-                isVisible = normalizedRotX > Math.PI / 2 - Math.PI / 4 && normalizedRotX < Math.PI / 2 + Math.PI / 4;
-                break;
-        }
-        
-        if (!isVisible) {
-            // Face is hidden, swap texture
-            swapFaceTexture(faceIndex);
-        }
-    }
-    
-    lastTextureChange = now;
-}
-
-function swapFaceTexture(faceIndex) {
-    const textureLoader = new THREE.TextureLoader();
-    
-    // Get a random memory that's not currently on any face
-    const usedMemories = [...cube.userData.faceMemories];
-    const availableMemories = CONFIG.memories.map((_, i) => i).filter(i => !usedMemories.includes(i));
-    
-    if (availableMemories.length === 0) return;
-    
-    const newMemoryIndex = availableMemories[Math.floor(Math.random() * availableMemories.length)];
-    const newMemory = CONFIG.memories[newMemoryIndex];
-    
-    textureLoader.load(newMemory.image, (texture) => {
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        
-        const newMaterial = new THREE.MeshStandardMaterial({
-            map: texture,
-            roughness: 0.3,
-            metalness: 0.1
-        });
-        
-        cube.material[faceIndex] = newMaterial;
-        cube.userData.faceMemories[faceIndex] = newMemoryIndex;
-    });
 }
 
 // ============================================
@@ -589,11 +461,10 @@ function resetCubeHighlight() {
 }
 
 // ============================================
-// CUBE ROTATION - MULTI-AXIS CINEMATIC
+// CUBE ROTATION - DRAMATIC MULTI-AXIS MOTION
 // ============================================
 function rotateToMemory(index) {
     // Calculate target rotation to show the specified memory face
-    // Each face is 90 degrees (PI/2 radians) apart
     const faceRotations = [
         { x: 0, y: -Math.PI / 2, z: 0 },      // right (0)
         { x: 0, y: Math.PI / 2, z: 0 },       // left (1)
@@ -612,7 +483,7 @@ function rotateToMemory(index) {
         x: target.x,
         y: target.y,
         z: target.z,
-        duration: 0.8,
+        duration: 0.6,
         ease: 'power3.out'
     });
     
@@ -644,7 +515,7 @@ function previewMemoryOnCube(index) {
             x: 0,
             y: 0,
             z: 0,
-            duration: 0.8,
+            duration: 0.6,
             ease: 'power3.out'
         });
 
@@ -653,7 +524,7 @@ function previewMemoryOnCube(index) {
 }
 
 // ============================================
-// INFINITE SCROLL MEMORY LIST - FIXED
+// INFINITE SCROLL MEMORY LIST - FIXED VISIBILITY
 // ============================================
 function initMemoryList() {
     const scrollContent = document.getElementById('memory-scroll-content');
@@ -687,10 +558,11 @@ function initMemoryList() {
         `;
     }).join('');
     
-    // Set initial scroll position to the middle set
+    // FIXED: Set initial scroll position to show the first set (middle)
     const singleSetHeight = CONFIG.memories.length * itemHeight;
-    scrollPosition = -singleSetHeight;
-    scrollContent.style.transform = `translateY(${scrollPosition}px)`;
+    // Start at position 0 to show items immediately
+    scrollPosition = 0;
+    scrollContent.style.transform = `translateY(0px)`;
     
     // Add scroll event listener
     const scrollContainer = document.getElementById('memory-scroll');
@@ -752,17 +624,17 @@ function updateScroll() {
         isScrolling = false;
     }
     
-    // Infinite scroll logic
+    // Infinite scroll logic - wrap around
     const singleSetHeight = CONFIG.memories.length * itemHeight;
-    const totalHeight = singleSetHeight * 3;
+    const totalContentHeight = scrollContent.scrollHeight;
     
     // If scrolled past the end, wrap to beginning
-    if (scrollPosition < -singleSetHeight * 2) {
+    if (scrollPosition < -singleSetHeight * 2 + 100) {
         scrollPosition += singleSetHeight;
     }
     
     // If scrolled before the beginning, wrap to end
-    if (scrollPosition > -singleSetHeight) {
+    if (scrollPosition > 100) {
         scrollPosition -= singleSetHeight;
     }
     
@@ -844,7 +716,7 @@ function onWindowResize() {
 }
 
 // ============================================
-// ANIMATION LOOP - MULTI-AXIS CINEMATIC
+// ANIMATION LOOP - DRAMATIC MULTI-AXIS MOTION
 // ============================================
 function animate() {
     requestAnimationFrame(animate);
@@ -853,24 +725,26 @@ function animate() {
     
     const time = Date.now() * 0.001;
     
-    // Auto-rotation when not hovering - CINEMATIC MULTI-AXIS MOTION
+    // DRAMATIC auto-rotation when not hovering
     if (autoRotate && !isHoveringList) {
-        // Primary Y rotation (main spin)
+        // Primary Y rotation - main spin (fast)
         targetRotation.y += CONFIG.autoRotateSpeed;
         
-        // Subtle X rotation (gentle nodding motion)
-        targetRotation.x = Math.sin(time * 0.3) * 0.08;
+        // X-axis tilt - dramatic front/back tilting (sidespin effect)
+        targetRotation.x = Math.sin(time * 0.8) * 0.4 + Math.sin(time * 1.3) * 0.15;
         
-        // Very subtle Z rotation (gentle tilting)
-        targetRotation.z = Math.sin(time * 0.2) * 0.03;
+        // Z-axis rotation - dramatic roll/tilt (frontspin effect)
+        targetRotation.z = Math.sin(time * 0.5) * 0.25 + Math.cos(time * 0.7) * 0.1;
         
-        // Occasional direction change (subtle)
-        if (Math.sin(time * 0.1) > 0.95) {
-            targetRotation.y -= CONFIG.autoRotateSpeed * 2;
+        // Occasional dramatic direction changes
+        if (Math.sin(time * 0.3) > 0.9) {
+            targetRotation.y -= CONFIG.autoRotateSpeed * 3;
         }
         
-        // Update hidden face textures periodically
-        updateHiddenFaceTextures();
+        // Add periodic "flip" effect
+        if (Math.sin(time * 0.15) > 0.95) {
+            targetRotation.x += 0.1;
+        }
     }
     
     // Smooth rotation interpolation for all axes
@@ -883,8 +757,11 @@ function animate() {
     cube.rotation.y = currentRotation.y;
     cube.rotation.z = currentRotation.z;
     
-    // Subtle floating animation
-    cube.position.y = Math.sin(time * 0.8) * 0.06;
+    // More dramatic floating animation
+    cube.position.y = Math.sin(time * 1.2) * 0.15 + Math.sin(time * 2.1) * 0.05;
+    
+    // Subtle side-to-side drift
+    cube.position.x = Math.sin(time * 0.4) * 0.08;
     
     renderer.render(scene, camera);
 }
@@ -1039,9 +916,15 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 /**
- * To change relationship start date:
- * Edit CONFIG.relationshipStart above
- * Format: new Date(Year, Month (0-11), Day, Hour, Minute, Second)
+ * To change cube size:
+ * Edit CONFIG.cubeSize (line 18)
+ * Default: 4.2 (was 3.5)
+ */
+
+/**
+ * To change rotation speed:
+ * Edit CONFIG.autoRotateSpeed (line 19)
+ * Default: 0.025 (much faster than before)
  */
 
 /**
