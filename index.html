@@ -70,9 +70,15 @@
                 <div class="relationship-label">Our Love Story</div>
             </div>
             <div class="nav-right">
-                <div class="anniversary-info">
-                    <span class="anniversary-label">Mensiversary</span>
-                    <span class="anniversary-date">Month 7</span>
+                <!-- Live Relationship Timer -->
+                <div class="relationship-timer">
+                    <span class="timer-label">Together For</span>
+                    <span class="timer-display" id="relationship-timer">
+                        <span class="time-value">0</span><span class="time-unit">Y</span>
+                        <span class="time-value">0</span><span class="time-unit">M</span>
+                        <span class="time-value">0</span><span class="time-unit">D</span>
+                        <span class="time-value">00:00:00</span>
+                    </span>
                 </div>
             </div>
         </nav>
@@ -99,7 +105,7 @@
             <div class="memory-sidebar">
                 <div class="sidebar-header">
                     <span class="sidebar-label">Memory Collection</span>
-                    <span class="sidebar-count" id="memory-count">05</span>
+                    <span class="sidebar-count" id="memory-count">10</span>
                 </div>
                 
                 <!-- Infinite Scroll Container -->
@@ -113,7 +119,7 @@
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
-                    <span class="progress-text" id="progress-text">01 / 05</span>
+                    <span class="progress-text" id="progress-text">01 / 10</span>
                 </div>
             </div>
         </section>
