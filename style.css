@@ -412,7 +412,7 @@ body {
 
 /* Infinite Scroll Container */
 #memory-scroll {
-    height: 280px;
+    height: 400px;
     overflow: hidden;
     position: relative;
 
