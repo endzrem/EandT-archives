@@ -44,11 +44,11 @@ const CONFIG = {
             url: 'memories/graduation-tiara.html'
         },
         {
-            id: 'first-trip',
-            title: 'First Trip Together',
+            id: 'first-date',
+            title: 'Our First Date!',
             date: 'August 10, 2025',
-            image: 'assets/images/cube-first-trip.jpg',
-            url: 'memories/first-trip.html'
+            image: 'assets/images/first-date-cube.jpg',
+            url: 'memories/first-date.html'
         },
         {
             id: 'anniversary-dinner',
