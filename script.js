@@ -59,9 +59,9 @@ const CONFIG = {
         },
         {
             id: 'JFW 2025',
-            title: 'Our First Photo',
+            title: 'JFW 2025',
             date: 'October 1, 2024',
-            image: 'assets/images/cube-JFW.JPG',
+            image: 'assets/images/cube-jfw.JPG',
             url: 'memories/first-photo.html'
         }
     ]
