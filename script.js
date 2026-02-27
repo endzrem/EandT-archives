@@ -58,10 +58,10 @@ const CONFIG = {
             url: 'memories/anniversary-dinner.html'
         },
         {
-            id: 'first-photo',
+            id: 'JFW 2025',
             title: 'Our First Photo',
             date: 'October 1, 2024',
-            image: 'assets/images/cube-first-photo.jpg',
+            image: 'assets/images/cube-JFW.JPG',
             url: 'memories/first-photo.html'
         }
     ]
