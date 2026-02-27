@@ -53,7 +53,7 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-x: visible;
+    overflow-x: hidden;
     min-height: 100vh;
 }
 
@@ -123,7 +123,7 @@ body {
     height: 2px;
     background-color: var(--border-color);
     margin: 0 auto 1rem;
-    overflow: visible;
+    overflow: hidden;
     border-radius: 1px;
 }
 
@@ -321,7 +321,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: visible;
+    overflow: hidden;
     padding: 0 3rem;
     background: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.8) 0%, var(--bg-primary) 70%);
 }
@@ -466,7 +466,7 @@ body {
 
 #memory-scroll {
     flex: 1;
-    overflow: visible;
+    overflow: hidden;
     position: relative;
 
     /* Ensure content renders above glass blur layers */
@@ -510,7 +510,7 @@ body {
 
     text-decoration: none;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
 
@@ -582,7 +582,7 @@ body {
     font-weight: 500;
 
     white-space: nowrap;
-    overflow: visible;
+    overflow: hidden;
     text-overflow: ellipsis;
 
     flex: 1;
@@ -620,7 +620,7 @@ body {
     height: 3px;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .progress-fill {
@@ -803,7 +803,7 @@ body {
     display: flex;
     align-items: flex-end;
     padding: 3rem;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .memory-hero-image {
@@ -926,7 +926,7 @@ body {
 .gallery-item {
     position: relative;
     aspect-ratio: 4/3;
-    overflow: visible;
+    overflow: hidden;
     cursor: pointer;
     background-color: var(--bg-tertiary);
     border-radius: 8px;
@@ -991,7 +991,7 @@ body {
 
 #lightbox.active {
     opacity: 1;
-    visibility: visible;
+    visibility: hidden;
 }
 
 .lightbox-content {
