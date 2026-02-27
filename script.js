@@ -15,9 +15,9 @@
 // ============================================
 const CONFIG = {
     // Cube settings
-    cubeSize: 2.8,
-    autoRotateSpeed: 0.003,
-    hoverRotateSpeed: 0.08,
+    cubeSize: 3.5,
+    autoRotateSpeed: 0.008,
+    hoverRotateSpeed: 0.02,
     
     // Audio settings
     audioVolume: 0.3,  // 0.0 to 1.0 (30% volume)
@@ -85,7 +85,7 @@ let isScrolling = false;
 let scrollAnimationId = null;
 const itemHeight = 52; // Height of each memory item + margin
 const scrollFriction = 0.95;
-const scrollSpeed = 0.8;
+const scrollSpeed = 0.4;
 
 // Audio
 let bgMusic = null;
@@ -490,7 +490,7 @@ function initMemoryList() {
     
     // Set initial scroll position to the middle set
     const singleSetHeight = CONFIG.memories.length * itemHeight;
-    scrollPosition = -singleSetHeight / 2;
+    scrollPosition = -singleSetHeight;
     scrollContent.style.transform = `translateY(${scrollPosition}px)`;
     
     // Add scroll event listener
