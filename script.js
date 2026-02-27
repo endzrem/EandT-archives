@@ -490,7 +490,7 @@ function initMemoryList() {
     
     // Set initial scroll position to the middle set
     const singleSetHeight = CONFIG.memories.length * itemHeight;
-    scrollPosition = -singleSetHeight;
+    scrollPosition = -singleSetHeight / 2;
     scrollContent.style.transform = `translateY(${scrollPosition}px)`;
     
     // Add scroll event listener
