@@ -477,11 +477,11 @@ body {
 .memory-scroll-content {
     position: relative;
     width: 100%;
-    will-change: transform;
     padding: 0.5rem 0;
 
-    /* Prevent blur blending issues */
-    isolation: isolate;
+    will-change: transform;
+    z-index: 100;
+    transform: translateZ(0);   /* forces own rendering layer */
 }
 
 
