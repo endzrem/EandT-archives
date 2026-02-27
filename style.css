@@ -407,7 +407,7 @@ body {
 
 .memory-sidebar {
     position: absolute;
-    right: 3rem;
+    left: 3rem;
     top: 350px;
     transform: none;
     width: 360px;
