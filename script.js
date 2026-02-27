@@ -244,7 +244,7 @@ function createCube() {
     
     // Load textures for each face
     const textureLoader = new THREE.TextureLoader();
-    totalTextures = CONFIG.memories.length;
+    totalTextures = 6;
     
     // Create materials array (6 faces)
     // Order: right, left, top, bottom, front, back
