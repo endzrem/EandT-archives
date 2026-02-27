@@ -402,8 +402,9 @@ body {
 }
 
 /* ============================================
-   MEMORY SIDEBAR - FIXED VISIBILITY
+   MEMORY SIDEBAR — VISIBILITY FIX
    ============================================ */
+
 .memory-sidebar {
     position: absolute;
     right: 3rem;
@@ -412,15 +413,24 @@ body {
     width: 360px;
     height: 500px;
     max-height: 50vh;
-    z-index: 20;
+
+    /* 🔑 KEY FIX */
+    z-index: 50;
+    isolation: isolate;
+
     background: var(--bg-card);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 1.5rem;
+
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .sidebar-header {
