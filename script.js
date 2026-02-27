@@ -86,7 +86,6 @@ let scrollPosition = 0;
 let scrollVelocity = 0;
 let isScrolling = false;
 let scrollAnimationId = null;
-const itemHeight = 58; // Height of each memory item + margin
 const scrollFriction = 0.95;
 const scrollSpeed = 0.4;
 
@@ -537,8 +536,7 @@ function initMemoryList() {
     if (memoryCount) memoryCount.textContent = String(CONFIG.memories.length).padStart(2, '0');
     if (progressText) progressText.textContent = `01 / ${String(CONFIG.memories.length).padStart(2, '0')}`;
     
-    // Create memory items - we create 3x the items for seamless infinite scroll
-    // Original set + clone before + clone after
+    // Create memory items (3x for infinite scroll)
     const allMemories = [...CONFIG.memories, ...CONFIG.memories, ...CONFIG.memories];
     
     scrollContent.innerHTML = allMemories.map((memory, index) => {
@@ -558,11 +556,22 @@ function initMemoryList() {
         `;
     }).join('');
     
-    // Set initial scroll position to ORIGINAL (middle) set
+    /* =========================================
+       🔥 CRITICAL FIX — REAL ITEM HEIGHT
+       ========================================= */
+    
+    const firstItem = scrollContent.querySelector('.memory-item');
+    const itemHeight = firstItem
+        ? firstItem.offsetHeight + parseFloat(getComputedStyle(firstItem).marginBottom)
+        : 80;
+    
     const singleSetHeight = CONFIG.memories.length * itemHeight;
     
-    scrollPosition = -singleSetHeight;   // center on real items
+    // Start at ORIGINAL (middle) set
+    scrollPosition = -singleSetHeight;
     scrollContent.style.transform = `translateY(${scrollPosition}px)`;
+    
+    /* ========================================= */
     
     // Add scroll event listener
     const scrollContainer = document.getElementById('memory-scroll');
@@ -571,6 +580,7 @@ function initMemoryList() {
         
         // Touch support
         let touchStartY = 0;
+        
         scrollContainer.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
         }, { passive: true });
