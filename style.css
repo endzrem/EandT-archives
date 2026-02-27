@@ -373,6 +373,7 @@ body {
     z-index: 10;
     cursor: default;
     pointer-events: none;
+    margin-left: 80px; /* <-- move cube right (adjust) */
 }
 
 #cube-container canvas {
@@ -408,10 +409,10 @@ body {
 .memory-sidebar {
     position: absolute;
     left: 3rem;
-    top: 350px;
+    top: 400px;
     transform: none;
     width: 360px;
-    height: 500px;
+    height: 400px;
 
     /* 🔑 KEY FIX */
     z-index: 999;
