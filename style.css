@@ -1149,30 +1149,3 @@ body {
 .glow-effect {
     animation: glow 2s ease-in-out infinite;
 }
-
-/* ===== FIX MEMORY LIST VISIBILITY ===== */
-
-.memory-item {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.memory-title {
-    color: #ffffff !important;
-    opacity: 0.95;
-}
-
-.memory-number {
-    color: #e8d5a3 !important;
-    font-weight: 700;
-}
-
-.memory-item:hover {
-    background: rgba(201, 169, 98, 0.18);
-    border-color: rgba(201, 169, 98, 0.5);
-}
-
-.memory-item.active {
-    background: rgba(201, 169, 98, 0.22);
-    border-color: #c9a962;
-}
