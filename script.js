@@ -88,7 +88,7 @@ let isScrolling = false;
 let scrollAnimationId = null;
 const itemHeight = 58; // Height of each memory item + margin
 const scrollFriction = 0.95;
-const scrollSpeed = 0.4;
+const scrollSpeed = 0.1;
 
 // Audio
 let bgMusic = null;
@@ -572,7 +572,7 @@ function initMemoryList() {
             const deltaY = touchStartY - touchY;
             touchStartY = touchY;
             
-            scrollVelocity += deltaY * 0.3;
+            scrollVelocity += deltaY * 0.1;
             isScrolling = true;
             
             if (!scrollAnimationId) {
