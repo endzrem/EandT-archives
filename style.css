@@ -461,41 +461,58 @@ body {
 }
 
 /* ============================================
-   MEMORY SCROLL - FIXED FOR VISIBILITY
+   MEMORY SCROLL — VISIBILITY SAFE VERSION
    ============================================ */
+
 #memory-scroll {
     flex: 1;
     overflow: hidden;
     position: relative;
-    /* Removed mask-image that was hiding content */
+
+    /* Ensure content renders above glass blur layers */
+    z-index: 1;
 }
 
+/* Scroll content container */
 .memory-scroll-content {
     position: relative;
     width: 100%;
     will-change: transform;
     padding: 0.5rem 0;
+
+    /* Prevent blur blending issues */
+    isolation: isolate;
 }
 
+
 /* ============================================
-   MEMORY LIST ITEMS - HIGHLY VISIBLE
+   MEMORY LIST ITEMS — HIGH CONTRAST FIX
    ============================================ */
+
 .memory-item {
     display: flex;
     align-items: center;
     gap: 1rem;
+
     padding: 1rem 1.25rem;
     margin-bottom: 0.5rem;
+
     cursor: pointer;
     transition: all var(--transition-fast);
+
     border-radius: 12px;
     border: 1px solid transparent;
-    background: rgba(255, 255, 255, 0.08);
+
+    /* 🔑 Increased contrast (still elegant) */
+    background: rgba(255, 255, 255, 0.14);
+
     text-decoration: none;
     position: relative;
     overflow: hidden;
 }
 
+
+/* Left accent bar */
 .memory-item::before {
     content: '';
     position: absolute;
@@ -503,14 +520,17 @@ body {
     top: 0;
     bottom: 0;
     width: 4px;
+
     background: var(--accent-color);
     opacity: 0;
     transition: opacity var(--transition-fast);
 }
 
+
+/* Hover state */
 .memory-item:hover {
-    background: rgba(201, 169, 98, 0.2);
-    border-color: rgba(201, 169, 98, 0.5);
+    background: rgba(201, 169, 98, 0.22);
+    border-color: rgba(201, 169, 98, 0.6);
     transform: translateX(8px);
 }
 
@@ -518,40 +538,65 @@ body {
     opacity: 1;
 }
 
+
+/* Active state */
 .memory-item.active {
-    background: rgba(201, 169, 98, 0.25);
+    background: rgba(201, 169, 98, 0.28);
     border-color: var(--accent-color);
-    box-shadow: 0 0 25px rgba(201, 169, 98, 0.3);
+    box-shadow: 0 0 25px rgba(201, 169, 98, 0.35);
 }
 
 .memory-item.active::before {
     opacity: 1;
 }
 
+
+/* Number */
 .memory-number {
     font-size: 0.875rem;
     color: var(--accent-color);
     font-weight: 700;
+
     min-width: 32px;
     display: inline-block;
+
     font-variant-numeric: tabular-nums;
+
+    /* 🔑 Prevent dimming */
+    opacity: 1;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
 }
 
+
+/* Title text */
 .memory-title {
     font-size: 0.9375rem;
+
+    /* 🔑 Force readable white */
     color: #ffffff !important;
+    opacity: 1;
+
     letter-spacing: 0.01em;
     font-weight: 500;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
     flex: 1;
+
+    /* Improves readability on glass backgrounds */
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
 
+
+/* Hover title color */
 .memory-item:hover .memory-title {
     color: var(--accent-hover) !important;
 }
 
+
+/* Active title */
 .memory-item.active .memory-title {
     color: #ffffff !important;
     font-weight: 600;
