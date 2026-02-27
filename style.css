@@ -385,7 +385,7 @@ body {
     right: 3rem;
     top: 50%;
     transform: translateY(-50%);
-    width: 340px;
+    width: 1000px;
     max-height: 70vh;
     z-index: 20;
     background: var(--bg-card);
@@ -427,7 +427,7 @@ body {
 
 /* Infinite Scroll Container - FIXED FOR VISIBILITY */
 #memory-scroll {
-    height: 1000px;
+    height: 400px;
     overflow: hidden;
     position: relative;
     flex: 1;
