@@ -40,21 +40,21 @@ const CONFIG = {
             id: 'graduation-endrian',
             title: 'Graduation Endrian 2025',
             date: 'June 15, 2025',
-            image: 'assets/images/cube-graduation-endrian.jpg',
+            image: 'assets/images/cube-wispril.JPG',
             url: 'memories/graduation-endrian.html'
         },
         {
             id: 'graduation-tiara',
-            title: 'Graduation Tiara 2025',
+            title: 'Deans Award Tiara 2025',
             date: 'July 20, 2025',
-            image: 'assets/images/cube-graduation-tiara.jpg',
+            image: 'assets/images/cube-deans.JPG',
             url: 'memories/graduation-tiara.html'
         },
         {
             id: 'anniversary-dinner',
-            title: 'Anniversary Dinner',
+            title: 'Graduation Tiara',
             date: 'September 5, 2025',
-            image: 'assets/images/cube-anniversary-dinner.jpg',
+            image: 'assets/images/cube-ked.JPG',
             url: 'memories/anniversary-dinner.html'
         },
         {
