@@ -86,6 +86,7 @@ let scrollPosition = 0;
 let scrollVelocity = 0;
 let isScrolling = false;
 let scrollAnimationId = null;
+const itemHeight = 58; // Height of each memory item + margin
 const scrollFriction = 0.95;
 const scrollSpeed = 0.4;
 
@@ -536,7 +537,8 @@ function initMemoryList() {
     if (memoryCount) memoryCount.textContent = String(CONFIG.memories.length).padStart(2, '0');
     if (progressText) progressText.textContent = `01 / ${String(CONFIG.memories.length).padStart(2, '0')}`;
     
-    // Create memory items (3x for infinite scroll)
+    // Create memory items - we create 3x the items for seamless infinite scroll
+    // Original set + clone before + clone after
     const allMemories = [...CONFIG.memories, ...CONFIG.memories, ...CONFIG.memories];
     
     scrollContent.innerHTML = allMemories.map((memory, index) => {
@@ -556,22 +558,11 @@ function initMemoryList() {
         `;
     }).join('');
     
-    /* =========================================
-       🔥 CRITICAL FIX — REAL ITEM HEIGHT
-       ========================================= */
-    
-    const firstItem = scrollContent.querySelector('.memory-item');
-    const itemHeight = firstItem
-        ? firstItem.offsetHeight + parseFloat(getComputedStyle(firstItem).marginBottom)
-        : 80;
-    
+    // FIXED: Set initial scroll position to show the first set (middle)
     const singleSetHeight = CONFIG.memories.length * itemHeight;
-    
-    // Start at ORIGINAL (middle) set
-    scrollPosition = -singleSetHeight;
-    scrollContent.style.transform = `translateY(${scrollPosition}px)`;
-    
-    /* ========================================= */
+    // Start at position 0 to show items immediately
+    scrollPosition = 0;
+    scrollContent.style.transform = `translateY(0px)`;
     
     // Add scroll event listener
     const scrollContainer = document.getElementById('memory-scroll');
@@ -580,7 +571,6 @@ function initMemoryList() {
         
         // Touch support
         let touchStartY = 0;
-        
         scrollContainer.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
         }, { passive: true });
@@ -639,11 +629,12 @@ function updateScroll() {
     const totalContentHeight = scrollContent.scrollHeight;
     
     // If scrolled past the end, wrap to beginning
-    if (scrollPosition < -singleSetHeight * 2) {
+    if (scrollPosition < -singleSetHeight * 2 + 100) {
         scrollPosition += singleSetHeight;
     }
     
-    if (scrollPosition > 0) {
+    // If scrolled before the beginning, wrap to end
+    if (scrollPosition > 100) {
         scrollPosition -= singleSetHeight;
     }
     
