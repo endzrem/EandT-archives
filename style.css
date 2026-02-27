@@ -342,7 +342,7 @@ body {
 /* Large Typography Background */
 .hero-typography {
     position: absolute;
-    left: -5%;
+    right: 5%;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
@@ -373,7 +373,7 @@ body {
     z-index: 10;
     cursor: default;
     pointer-events: none;
-    margin-left: 80px; /* <-- move cube right (adjust) */
+    margin-left: 150px; /* <-- move cube right (adjust) */
 }
 
 #cube-container canvas {
@@ -409,10 +409,10 @@ body {
 .memory-sidebar {
     position: absolute;
     left: 3rem;
-    top: 250px;
+    top: 260px;
     transform: none;
     width: 360px;
-    height: 350px;
+    height: 250px;
 
     /* 🔑 KEY FIX */
     z-index: 999;
