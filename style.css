@@ -53,7 +53,7 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: visible;
     min-height: 100vh;
 }
 
@@ -123,7 +123,7 @@ body {
     height: 2px;
     background-color: var(--border-color);
     margin: 0 auto 1rem;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 1px;
 }
 
@@ -321,7 +321,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
     padding: 0 3rem;
     background: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.8) 0%, var(--bg-primary) 70%);
 }
@@ -414,23 +414,23 @@ body {
     height: 500px;
     max-height: 50vh;
 
-    /* layering & containment */
+    /* 🔑 KEY FIX */
     z-index: 50;
+    isolation: isolate;
 
-    /* visual style (keep the glass) */
     background: var(--bg-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 1.5rem;
+
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
 
     display: flex;
     flex-direction: column;
-
-    /* keep clipping for production effect, but ensure children are contained */
-    overflow: hidden;
+    overflow: visible;
 }
 
 .sidebar-header {
@@ -466,7 +466,7 @@ body {
 
 #memory-scroll {
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 
     /* Ensure content renders above glass blur layers */
@@ -478,14 +478,10 @@ body {
     position: relative;
     width: 100%;
     padding: 0.5rem 0;
-
-    /* allow JS transforms but avoid forcing a new 3D compositing layer */
     will-change: transform;
-
-    /* keep stacking inside the sidebar (not viewport) */
-    z-index: 2;
-    /* IMPORTANT: do NOT use translateZ(0) or other 3D transforms here */
+    z-index: 100;
 }
+
 
 /* ============================================
    MEMORY LIST ITEMS — HIGH CONTRAST FIX
@@ -510,7 +506,7 @@ body {
 
     text-decoration: none;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 
@@ -582,7 +578,7 @@ body {
     font-weight: 500;
 
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
 
     flex: 1;
@@ -620,7 +616,7 @@ body {
     height: 3px;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .progress-fill {
@@ -803,7 +799,7 @@ body {
     display: flex;
     align-items: flex-end;
     padding: 3rem;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .memory-hero-image {
@@ -926,7 +922,7 @@ body {
 .gallery-item {
     position: relative;
     aspect-ratio: 4/3;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     background-color: var(--bg-tertiary);
     border-radius: 8px;
@@ -991,7 +987,7 @@ body {
 
 #lightbox.active {
     opacity: 1;
-    visibility: hidden;
+    visibility: visible;
 }
 
 .lightbox-content {
