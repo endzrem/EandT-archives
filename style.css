@@ -408,10 +408,10 @@ body {
 .memory-sidebar {
     position: absolute;
     right: 3rem;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 250px;
+    transform: none;
     width: 360px;
-    height: 500px;
+    height: 700px;
     max-height: 50vh;
 
     /* 🔑 KEY FIX */
