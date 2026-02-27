@@ -47,7 +47,7 @@ const CONFIG = {
             id: 'first-date',
             title: 'Our First Date!',
             date: 'August 10, 2025',
-            image: 'assets/images/first-date-cube.jpg',
+            image: 'assets/images/first-date-cube.JPG',
             url: 'memories/first-date.html'
         },
         {
