@@ -410,7 +410,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     width: 360px;
-    height: 600px;
+    height: 500px;
     max-height: 50vh;
     z-index: 20;
     background: var(--bg-card);
