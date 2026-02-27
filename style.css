@@ -413,7 +413,25 @@ body {
 /* Infinite Scroll Container */
 #memory-scroll {
     height: 300px;
-    overflow-y: auto;
+    overflow: hidden;
+    position: relative;
+
+    /* softer fade so items stay visible */
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.2) 0%,
+        black 15%,
+        black 85%,
+        rgba(0,0,0,0.2) 100%
+    );
+
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.2) 0%,
+        black 15%,
+        black 85%,
+        rgba(0,0,0,0.2) 100%
+    );
 }
 
 .memory-scroll-content {
