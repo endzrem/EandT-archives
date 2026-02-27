@@ -53,7 +53,7 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: visible;
     min-height: 100vh;
 }
 
@@ -123,7 +123,7 @@ body {
     height: 2px;
     background-color: var(--border-color);
     margin: 0 auto 1rem;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 1px;
 }
 
@@ -321,7 +321,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
     padding: 0 3rem;
     background: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.8) 0%, var(--bg-primary) 70%);
 }
@@ -430,7 +430,7 @@ body {
 
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .sidebar-header {
@@ -466,7 +466,7 @@ body {
 
 #memory-scroll {
     flex: 1;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
 
     /* Ensure content renders above glass blur layers */
@@ -506,7 +506,7 @@ body {
 
     text-decoration: none;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 
@@ -578,7 +578,7 @@ body {
     font-weight: 500;
 
     white-space: nowrap;
-    overflow: hidden;
+    overflow: visible;
     text-overflow: ellipsis;
 
     flex: 1;
@@ -616,7 +616,7 @@ body {
     height: 3px;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .progress-fill {
@@ -799,7 +799,7 @@ body {
     display: flex;
     align-items: flex-end;
     padding: 3rem;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .memory-hero-image {
@@ -922,7 +922,7 @@ body {
 .gallery-item {
     position: relative;
     aspect-ratio: 4/3;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     background-color: var(--bg-tertiary);
     border-radius: 8px;
