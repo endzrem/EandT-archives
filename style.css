@@ -1045,28 +1045,57 @@ body {
 }
 
 /* ============================================
-   MEMORY PAGE NAVIGATION BUTTONS
-   Styled prev/next navigation for memory pages
+   MEMORY PAGE NAVIGATION (PREV / NEXT)
+   Matches HTML:
+   <footer class="memory-footer">
+     <a class="memory-nav-button prev">...</a>
+     <a class="memory-nav-button next">...</a>
+   </footer>
    ============================================ */
-.memory-nav-button,
-a.memory-nav-button {
-    display: inline-flex;
+
+/* Fixed footer container at bottom */
+.memory-footer {
+    position: fixed;
+    left: 3rem;
+    right: 3rem;
+    bottom: 2rem;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    margin: 0;
+    padding: 0;
+
+    z-index: 300;
+}
+
+/* Base button styling */
+.memory-footer .memory-nav-button,
+.memory-footer a.memory-nav-button {
+    flex: 1;                     /* make prev/next split left/right evenly */
+    display: flex;               /* override any inline-flex */
     align-items: center;
     gap: 0.75rem;
+
     padding: 0.875rem 1.5rem;
+
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 12px;
+
     color: var(--text-secondary);
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
+
     cursor: pointer;
     transition: all var(--transition-fast);
     backdrop-filter: blur(10px);
 }
 
-.memory-nav-button:hover {
+/* Hover */
+.memory-footer .memory-nav-button:hover {
     background: rgba(201, 169, 98, 0.1);
     border-color: var(--accent-color);
     color: var(--accent-color);
@@ -1074,33 +1103,30 @@ a.memory-nav-button {
     box-shadow: 0 4px 20px rgba(201, 169, 98, 0.2);
 }
 
-.memory-nav-button .nav-arrow {
-    font-size: 1.1rem;
-    line-height: 1;
+/* Prev button = left aligned */
+.memory-footer .memory-nav-button.prev {
+    justify-content: flex-start;
+    text-align: left;
 }
 
-.memory-nav-button.nav-prev .nav-arrow {
-    margin-right: 0.25rem;
+/* Next button = right aligned */
+.memory-footer .memory-nav-button.next {
+    justify-content: flex-end;
+    text-align: right;
 }
 
-.memory-nav-button.nav-next .nav-arrow {
-    margin-left: 0.25rem;
-}
-
-/* Navigation container fixed to bottom */
-.memory-prev-next {
+/* Optional: make the text block inside the button behave nicely */
+.memory-footer .memory-nav-button > div {
     display: flex;
-    align-items: center;
-    justify-content: space-between; /* prev left, next right */
-    gap: 1rem;
-
-    padding: 2rem 0;
-    margin-top: 2rem;
-    border-top: 1px solid var(--border-color);
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0; /* allows ellipsis if you add it */
 }
 
-.memory-prev-next .nav-prev { margin-right: auto; }
-.memory-prev-next .nav-next { margin-left: auto; }
+/* ensure page content isn't covered by fixed footer */
+.memory-content {
+    padding-bottom: 10rem; /* adjust up/down if needed */
+}
 
 /* ============================================
    Responsive
