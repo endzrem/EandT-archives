@@ -317,6 +317,7 @@ body {
    ============================================ */
 .hero-section {
     position: relative;
+    isolation: isolate;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -325,19 +326,16 @@ body {
     padding: 0 3rem;
     background: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.8) 0%, var(--bg-primary) 70%);
 }
-
-/* Vignette Effect */
 .hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
-    pointer-events: none;
-    z-index: 1;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+  z-index: 0;
 }
+
+
 
 /* Large Typography Background - HIDDEN for film theme */
 .hero-typography {
