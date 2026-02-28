@@ -391,7 +391,7 @@ function createBackgroundStrips(count) {
         if (direction === 'top-bottom' || direction === 'bottom-top') {
             strip.style.left = `${(i / count) * 100}%`;
             strip.style.top = direction === 'top-bottom' ? '-20%' : '120%';
-            strip.style.width = '80px';
+            strip.style.width = '120px';
             strip.style.height = '150%';
         } else if (direction === 'diagonal' || direction === 'diagonal-reverse') {
             strip.style.left = '-20%';
@@ -403,7 +403,7 @@ function createBackgroundStrips(count) {
             strip.style.left = '-20%';
             strip.style.top = `${(i / count) * 100}%`;
             strip.style.width = '150%';
-            strip.style.height = '80px';
+            strip.style.height = '120px';
         }
         
         // Higher opacity and less blur for visibility
