@@ -1055,19 +1055,16 @@ body {
 
 /* Fixed footer container at bottom */
 .memory-footer {
-    position: fixed;
-    left: 3rem;
-    right: 3rem;
-    bottom: 2rem;
-
+    position: relative;          /* or just remove position entirely */
     display: flex;
     justify-content: space-between;
     gap: 1.5rem;
 
-    margin: 0;
-    padding: 0;
+    margin: 2rem 3rem 3rem;      /* top, left/right, bottom spacing */
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
 
-    z-index: 300;
+    z-index: 1;
 }
 
 /* Base button styling */
@@ -1124,9 +1121,7 @@ body {
 }
 
 /* ensure page content isn't covered by fixed footer */
-.memory-content {
-    padding-bottom: 10rem; /* adjust up/down if needed */
-}
+
 
 /* ============================================
    Responsive
