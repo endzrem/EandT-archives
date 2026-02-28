@@ -1,11 +1,12 @@
 /**
  * OUR MEMORIES - PREMIUM MEMORY ARCHIVE
- * Three.js 3D Cube Gallery with Infinite Scroll List
+ * Vintage Film Strip Gallery with Infinite Scroll List
  * 
  * Features:
- * - Auto-rotating cube with DRAMATIC multi-axis motion (frontspin, sidespin, tilts)
- * - Infinite scroll memory list - FIXED VISIBILITY
- * - Hover triggers cube rotation to preview memory
+ * - Animated vintage film strip displaying memory previews
+ * - Background decorative film layers
+ * - Infinite scroll memory list
+ * - Hover triggers film strip to highlight memory
  * - Background music with mute toggle
  * - Smooth cinematic animations
  */
@@ -14,10 +15,10 @@
 // CONFIGURATION - Easy to customize
 // ============================================
 const CONFIG = {
-    // Cube settings - BIGGER AND FASTER
-    cubeSize: 4.2,              // Increased from 3.5
-    autoRotateSpeed: 0.025,     // Much faster rotation (was 0.008)
-    hoverRotateSpeed: 0.08,     // Faster response (was 0.02)
+    // Film strip settings
+    mainStripSpeed: 40,           // Pixels per second for auto-scroll
+    backgroundStripCount: 8,      // Number of decorative background strips
+    highlightPause: 1500,         // ms to pause on highlight
     
     // Audio settings
     audioVolume: 0.3,  // 0.0 to 1.0 (30% volume)
@@ -70,6 +71,7 @@ const CONFIG = {
 // ============================================
 // GLOBAL VARIABLES
 // ============================================
+// Three.js variables (kept for compatibility but unused)
 let scene, camera, renderer, cube;
 let targetRotation = { x: 0, y: 0, z: 0 };
 let currentRotation = { x: 0, y: 0, z: 0 };
@@ -80,6 +82,14 @@ let texturesLoaded = 0;
 let totalTextures = 0;
 let cubeMaterials = [];
 let originalMaterials = [];
+
+// Film strip variables
+let filmStripElements = [];
+let mainStripTimeline = null;
+let bgStripTimelines = [];
+let frameHeight = 0;
+let isFilmStripPaused = false;
+let currentHighlightedIndex = -1;
 
 // Infinite scroll variables
 let scrollPosition = 0;
@@ -220,6 +230,14 @@ function animatePageEntrance() {
         delay: 0.4
     });
     
+    // Animate film strip entrance
+    gsap.from('.main-film-strip', {
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        delay: 0.6
+    });
 }
 
 // ============================================
@@ -267,252 +285,392 @@ function toggleMusic() {
 }
 
 // ============================================
-// THREE.JS SETUP
+// THREE.JS SETUP (DISABLED - kept for compatibility)
 // ============================================
 function initThreeJS() {
-    const container = document.getElementById('cube-container');
-    if (!container) return;
-    
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    // Scene
-    scene = new THREE.Scene();
-    
-    // Camera - adjusted for bigger cube
-    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.z = 8;
-    
-    // Renderer
-    renderer = new THREE.WebGLRenderer({ 
-        antialias: true, 
-        alpha: true,
-        powerPreference: 'high-performance'
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-    
-    // Create cube
-    createCube();
-    
-    // Add lighting
-    addLighting();
-    
-    // Start animation loop
-    animate();
-
-    // FAILSAFE - show page even if textures fail
-    setTimeout(hideLoadingScreen, 3000);
+    // Film strip system replaces Three.js cube
+    // This function is kept for compatibility but does nothing
+    console.log('Three.js cube disabled - using film strip system');
 }
 
 function createCube() {
-    const geometry = new THREE.BoxGeometry(CONFIG.cubeSize, CONFIG.cubeSize, CONFIG.cubeSize);
-    
-    // Load textures for each face
-    const textureLoader = new THREE.TextureLoader();
-    
-    // Create materials array (6 faces)
-    // Order: right, left, top, bottom, front, back
-    const faceImages = [
-        CONFIG.memories[0].image, // right - face 0
-        CONFIG.memories[1].image, // left - face 1
-        CONFIG.memories[2].image, // top - face 2
-        CONFIG.memories[3].image, // bottom - face 3
-        CONFIG.memories[4].image, // front - face 4
-        CONFIG.memories[0].image  // back - fallback to first
-    ];
-    totalTextures = faceImages.length;
-    
-    cubeMaterials = [];
-    originalMaterials = [];
-    
-    faceImages.forEach((imagePath, index) => {
-        textureLoader.load(
-            imagePath,
-            (texture) => {
-                texture.minFilter = THREE.LinearFilter;
-                texture.magFilter = THREE.LinearFilter;
-                
-                const material = new THREE.MeshStandardMaterial({
-                    map: texture,
-                    roughness: 0.3,
-                    metalness: 0.1,
-                    side: THREE.FrontSide,
-                    emissive: 0x000000,
-                    emissiveIntensity: 0
-                });
-                
-                cubeMaterials[index] = material;
-                originalMaterials[index] = material.clone();
-                texturesLoaded++;
-                updateLoadingProgress();
-                
-                if (texturesLoaded === totalTextures) {
-                    setTimeout(hideLoadingScreen, 500);
-                }
-            },
-            undefined,
-            (error) => {
-                console.warn(`Failed to load texture: ${imagePath}`, error);
-            
-                const fallbackMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x1a1a1a,
-                    roughness: 0.3,
-                    metalness: 0.1
-                });
-            
-                cubeMaterials[index] = fallbackMaterial;
-                originalMaterials[index] = fallbackMaterial.clone();
-            
-                texturesLoaded++;
-                updateLoadingProgress();
-            
-                if (texturesLoaded === totalTextures) {
-                    setTimeout(hideLoadingScreen, 500);
-                }
-            }
-        );
-    });
-    
-    // Create cube with placeholder materials initially
-    const placeholderMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1a1a1a,
-        roughness: 0.3,
-        metalness: 0.1
-    });
-    
-    cube = new THREE.Mesh(geometry, [
-        placeholderMaterial, placeholderMaterial,
-        placeholderMaterial, placeholderMaterial,
-        placeholderMaterial, placeholderMaterial
-    ]);
-    
-    scene.add(cube);
-    
-    // Update materials once loaded
-    const checkMaterials = setInterval(() => {
-        if (cubeMaterials.length === 6 && cubeMaterials.every(m => m !== undefined)) {
-            cube.material = cubeMaterials;
-            clearInterval(checkMaterials);
-        }
-    }, 100);
+    // Disabled - kept for compatibility
 }
 
 function addLighting() {
-    // Ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-    
-    // Main directional light
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 5, 8);
-    scene.add(directionalLight);
-    
-    // Warm accent light
-    const warmLight = new THREE.PointLight(0xc9a962, 0.4);
-    warmLight.position.set(-5, 3, 5);
-    scene.add(warmLight);
-    
-    // Rim light for depth
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
-    rimLight.position.set(0, 0, -5);
-    scene.add(rimLight);
+    // Disabled - kept for compatibility
 }
 
-// ============================================
-// CUBE HIGHLIGHT EFFECT
-// ============================================
 function highlightCubeFace(faceIndex) {
-    if (!cube || !cube.material[faceIndex]) return;
-    
-    // Reset all faces
-    for (let i = 0; i < 6; i++) {
-        if (cube.material[i]) {
-            cube.material[i].emissive = new THREE.Color(0x000000);
-            cube.material[i].emissiveIntensity = 0;
-        }
-    }
-    
-    // Highlight selected face
-    const material = cube.material[faceIndex];
-    material.emissive = new THREE.Color(0xc9a962);
-    material.emissiveIntensity = 0.3;
+    // Disabled - kept for compatibility
 }
 
 function resetCubeHighlight() {
-    if (!cube) return;
-    
-    for (let i = 0; i < 6; i++) {
-        if (cube.material[i]) {
-            cube.material[i].emissive = new THREE.Color(0x000000);
-            cube.material[i].emissiveIntensity = 0;
-        }
-    }
+    // Disabled - kept for compatibility
 }
 
-// ============================================
-// CUBE ROTATION - DRAMATIC MULTI-AXIS MOTION
-// ============================================
 function rotateToMemory(index) {
-    // Calculate target rotation to show the specified memory face
-    const faceRotations = [
-        { x: 0, y: -Math.PI / 2, z: 0 },      // right (0)
-        { x: 0, y: Math.PI / 2, z: 0 },       // left (1)
-        { x: -Math.PI / 2, y: 0, z: 0 },      // top (2)
-        { x: Math.PI / 2, y: 0, z: 0 },       // bottom (3)
-        { x: 0, y: 0, z: 0 },                 // front (4)
-        { x: 0, y: Math.PI, z: 0 }            // back (5)
-    ];
-    
-    // Map memory index to face
-    const faceIndex = index % 6;
-    const target = faceRotations[faceIndex];
-    
-    // Smooth rotation with GSAP
-    gsap.to(targetRotation, {
-        x: target.x,
-        y: target.y,
-        z: target.z,
-        duration: 0.6,
-        ease: 'power3.out'
-    });
-    
-    // Highlight the face
-    highlightCubeFace(faceIndex);
+    // Disabled - kept for compatibility
 }
 
 function previewMemoryOnCube(index) {
-    if (!cube) return;
+    // Disabled - replaced by previewMemoryOnFilmStrip
+    previewMemoryOnFilmStrip(index);
+}
 
-    const memory = CONFIG.memories[index];
-    const textureLoader = new THREE.TextureLoader();
+function animate() {
+    // Disabled - kept for compatibility
+}
 
-    textureLoader.load(memory.image, (texture) => {
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
+// ============================================
+// VINTAGE FILM STRIP SYSTEM
+// ============================================
 
-        const material = new THREE.MeshStandardMaterial({
-            map: texture,
-            roughness: 0.3,
-            metalness: 0.1
-        });
+/**
+ * Initialize the film strip system
+ * Main entry point called on homepage load
+ */
+function initFilmStrip() {
+    const container = document.getElementById('cube-container');
+    if (!container) return;
+    
+    // Hide any existing canvas (Three.js)
+    container.classList.add('canvas-hidden');
+    
+    // Create background decorative strips
+    createBackgroundStrips(CONFIG.backgroundStripCount);
+    
+    // Create main interactive film strip
+    createMainStrip();
+    
+    // Populate frames with memory images
+    populateMainStripFrames();
+    
+    // Start animation
+    animateMainStrip();
+    
+    // Setup resize handler
+    window.addEventListener('resize', resizeFilmStrip);
+    
+    // Hide loading screen after setup
+    setTimeout(hideLoadingScreen, 800);
+}
 
-        // FRONT FACE = index 4
-        cube.material[4] = material;
+/**
+ * Create decorative background film strips
+ */
+function createBackgroundStrips(count) {
+    // Remove existing background strips
+    document.querySelectorAll('.bg-film-layer').forEach(el => el.remove());
+    bgStripTimelines = [];
+    
+    for (let i = 0; i < count; i++) {
+        const strip = document.createElement('div');
+        strip.className = 'bg-film-layer';
+        
+        // Randomize position and styling
+        const isDiagonal = Math.random() > 0.6;
+        if (isDiagonal) {
+            strip.classList.add(Math.random() > 0.5 ? 'diagonal' : 'diagonal-reverse');
+        }
+        
+        const stripInner = document.createElement('div');
+        stripInner.className = 'bg-film-strip';
+        strip.appendChild(stripInner);
+        
+        // Position randomly
+        const topPos = Math.random() * 100;
+        strip.style.top = `${topPos}%`;
+        strip.style.left = '-100%';
+        strip.style.width = '300%';
+        
+        // Random opacity and blur
+        const opacity = 0.03 + Math.random() * 0.09;
+        const blur = 1 + Math.random() * 2;
+        strip.style.opacity = opacity;
+        strip.style.filter = `blur(${blur}px) grayscale(90%)`;
+        
+        document.body.appendChild(strip);
+        
+        // Create GSAP animation for this strip
+        const duration = 40 + Math.random() * 100; // 40-140 seconds
+        const direction = Math.random() > 0.5 ? 1 : -1;
+        
+        const tl = gsap.timeline({ repeat: -1, ease: 'none' });
+        
+        if (direction === 1) {
+            // Left to right
+            tl.fromTo(strip, 
+                { x: '-100%' },
+                { x: '100%', duration: duration, ease: 'none' }
+            );
+        } else {
+            // Right to left
+            tl.fromTo(strip,
+                { x: '100%' },
+                { x: '-100%', duration: duration, ease: 'none' }
+            );
+        }
+        
+        bgStripTimelines.push(tl);
+    }
+}
 
-        // Rotate cube to front
-        gsap.to(targetRotation, {
-            x: 0,
-            y: 0,
-            z: 0,
-            duration: 0.6,
-            ease: 'power3.out'
-        });
+/**
+ * Create the main interactive film strip container
+ */
+function createMainStrip() {
+    const container = document.getElementById('cube-container');
+    if (!container) return;
+    
+    // Clear existing content
+    container.innerHTML = '';
+    
+    // Create main film stage
+    const stage = document.createElement('div');
+    stage.className = 'main-film-stage';
+    stage.id = 'main-film-stage';
+    
+    // Create film grain overlay
+    const grainOverlay = document.createElement('div');
+    grainOverlay.className = 'film-grain-overlay';
+    stage.appendChild(grainOverlay);
+    
+    // Create main film strip container
+    const strip = document.createElement('div');
+    strip.className = 'main-film-strip';
+    strip.id = 'main-film-strip';
+    stage.appendChild(strip);
+    
+    container.appendChild(stage);
+}
 
-        highlightCubeFace(4);
+/**
+ * Populate the main strip with memory frames
+ * Creates two sets (A and B) for seamless looping
+ */
+function populateMainStripFrames() {
+    const strip = document.getElementById('main-film-strip');
+    if (!strip) return;
+    
+    // Clear existing frames
+    strip.innerHTML = '';
+    filmStripElements = [];
+    
+    // Create Set A
+    const setA = document.createElement('div');
+    setA.className = 'film-set';
+    setA.id = 'film-set-a';
+    
+    // Create Set B (duplicate for seamless loop)
+    const setB = document.createElement('div');
+    setB.className = 'film-set';
+    setB.id = 'film-set-b';
+    
+    // Generate frames for both sets
+    CONFIG.memories.forEach((memory, index) => {
+        // Frame for Set A
+        const frameA = createFilmFrame(memory, index, 'a');
+        setA.appendChild(frameA);
+        filmStripElements.push(frameA);
+        
+        // Frame for Set B
+        const frameB = createFilmFrame(memory, index, 'b');
+        setB.appendChild(frameB);
+        filmStripElements.push(frameB);
     });
+    
+    strip.appendChild(setA);
+    strip.appendChild(setB);
+    
+    // Calculate frame height after rendering
+    requestAnimationFrame(() => {
+        const firstFrame = strip.querySelector('.film-frame');
+        if (firstFrame) {
+            frameHeight = firstFrame.offsetHeight;
+        }
+    });
+}
+
+/**
+ * Create a single film frame element
+ */
+function createFilmFrame(memory, index, setId) {
+    const frame = document.createElement('div');
+    frame.className = 'film-frame';
+    frame.dataset.index = index;
+    frame.dataset.set = setId;
+    frame.dataset.memoryId = memory.id;
+    
+    // Inner shadow overlay
+    const innerShadow = document.createElement('div');
+    innerShadow.className = 'frame-inner-shadow';
+    frame.appendChild(innerShadow);
+    
+    // Image
+    const img = document.createElement('img');
+    img.src = memory.image;
+    img.alt = memory.title;
+    img.loading = 'lazy';
+    frame.appendChild(img);
+    
+    // Frame number
+    const frameNumber = document.createElement('span');
+    frameNumber.className = 'film-frame-number';
+    frameNumber.textContent = String(index + 1).padStart(2, '0');
+    frame.appendChild(frameNumber);
+    
+    // Frame date
+    const frameDate = document.createElement('span');
+    frameDate.className = 'film-frame-date';
+    frameDate.textContent = memory.date;
+    frame.appendChild(frameDate);
+    
+    // Sprocket holes decoration
+    const sprockets = document.createElement('div');
+    sprockets.className = 'film-sprockets';
+    frame.appendChild(sprockets);
+    
+    return frame;
+}
+
+/**
+ * Animate the main film strip with continuous scrolling
+ */
+function animateMainStrip() {
+    const strip = document.getElementById('main-film-strip');
+    const setA = document.getElementById('film-set-a');
+    
+    if (!strip || !setA) return;
+    
+    // Calculate total height of one set
+    const setHeight = setA.offsetHeight;
+    
+    // Create continuous scrolling animation
+    mainStripTimeline = gsap.to(strip, {
+        y: -setHeight,
+        duration: setHeight / CONFIG.mainStripSpeed,
+        ease: 'none',
+        repeat: -1,
+        force3D: true,
+        onRepeat: () => {
+            // Reset position seamlessly
+            gsap.set(strip, { y: 0 });
+        }
+    });
+}
+
+/**
+ * Preview a memory on the film strip
+ * Called when hovering a sidebar item
+ */
+function previewMemoryOnFilmStrip(index) {
+    const strip = document.getElementById('main-film-strip');
+    const stage = document.getElementById('main-film-stage');
+    
+    if (!strip || !stage) return;
+    
+    // Pause or slow down the animation
+    if (mainStripTimeline) {
+        mainStripTimeline.timeScale(0.2); // Slow to 20% speed
+    }
+    
+    // Calculate target position to center the frame
+    const stageHeight = stage.offsetHeight;
+    const centerOffset = stageHeight / 2 - frameHeight / 2;
+    
+    // Get current Y position
+    const currentY = gsap.getProperty(strip, 'y');
+    
+    // Calculate the position of the target frame within the strip
+    // Each set has CONFIG.memories.length frames
+    const framesPerSet = CONFIG.memories.length;
+    const targetFrameY = index * frameHeight;
+    
+    // Find the nearest occurrence of this frame (could be in set A or B)
+    const setHeight = framesPerSet * frameHeight;
+    
+    // Calculate positions for both occurrences
+    const posA = targetFrameY;
+    const posB = targetFrameY + setHeight;
+    
+    // Determine which occurrence is closer to center
+    let targetY;
+    const currentVisibleY = -currentY + centerOffset;
+    
+    // Find the closest occurrence to center
+    const distA = Math.abs(posA - currentVisibleY);
+    const distB = Math.abs(posB - currentVisibleY);
+    
+    if (distA <= distB) {
+        targetY = -(posA - centerOffset);
+    } else {
+        targetY = -(posB - centerOffset);
+    }
+    
+    // Animate to target position
+    gsap.to(strip, {
+        y: targetY,
+        duration: 0.7,
+        ease: 'power3.out',
+        force3D: true,
+        onComplete: () => {
+            // Resume normal speed after pause duration
+            setTimeout(() => {
+                if (!isHoveringList && mainStripTimeline) {
+                    mainStripTimeline.timeScale(1);
+                }
+            }, CONFIG.highlightPause);
+        }
+    });
+    
+    // Highlight the frame
+    highlightFrame(index);
+}
+
+/**
+ * Highlight a specific frame
+ */
+function highlightFrame(index) {
+    // Remove highlight from all frames
+    document.querySelectorAll('.film-frame').forEach(frame => {
+        frame.classList.remove('film-highlight');
+    });
+    
+    // Add highlight to frames with matching index
+    document.querySelectorAll(`.film-frame[data-index="${index}"]`).forEach(frame => {
+        frame.classList.add('film-highlight');
+    });
+    
+    currentHighlightedIndex = index;
+}
+
+/**
+ * Remove highlight from all frames
+ */
+function resetFrameHighlight() {
+    document.querySelectorAll('.film-frame').forEach(frame => {
+        frame.classList.remove('film-highlight');
+    });
+    currentHighlightedIndex = -1;
+}
+
+/**
+ * Handle resize for film strip
+ */
+function resizeFilmStrip() {
+    // Recalculate frame height
+    const strip = document.getElementById('main-film-strip');
+    const firstFrame = strip?.querySelector('.film-frame');
+    if (firstFrame) {
+        frameHeight = firstFrame.offsetHeight;
+    }
+    
+    // Restart animation with new dimensions
+    if (mainStripTimeline) {
+        mainStripTimeline.kill();
+        animateMainStrip();
+    }
 }
 
 // ============================================
@@ -581,36 +739,40 @@ function initMemoryList() {
         }, { passive: true });
     }
     
-        // Add hover listeners to items
-        const items = scrollContent.querySelectorAll('.memory-item');
-        items.forEach(item => {
-            item.addEventListener('mouseenter', handleItemHover);
-            item.addEventListener('mouseleave', handleItemLeave);
-        });
+    // Add hover listeners to items
+    const items = scrollContent.querySelectorAll('.memory-item');
+    items.forEach(item => {
+        item.addEventListener('mouseenter', handleItemHover);
+        item.addEventListener('mouseleave', handleItemLeave);
+        
+        // Add focus support for accessibility
+        item.addEventListener('focus', handleItemHover);
+        item.addEventListener('blur', handleItemLeave);
+    });
     
-        // Animate items AFTER they exist in the DOM (GUARDED)
-        if (window.gsap) {
-            gsap.fromTo(
-                '#memory-scroll-content .memory-item',
-                { x: 30, opacity: 0 },
-                {
-                    x: 0,
-                    opacity: 1,
-                    duration: 0.5,
-                    stagger: 0.05,
-                    ease: 'power3.out',
-                    delay: 0.1,
-                    clearProps: 'opacity,transform,translate,rotate,scale'
-                }
-            );
-        } else {
-            // Fallback: show items even if GSAP fails to load
-            items.forEach(el => {
-                el.style.opacity = '1';
-                el.style.transform = 'none';
-            });
-        }
+    // Animate items AFTER they exist in the DOM (GUARDED)
+    if (window.gsap) {
+        gsap.fromTo(
+            '#memory-scroll-content .memory-item',
+            { x: 30, opacity: 0 },
+            {
+                x: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: 'power3.out',
+                delay: 0.1,
+                clearProps: 'opacity,transform,translate,rotate,scale'
+            }
+        );
+    } else {
+        // Fallback: show items even if GSAP fails to load
+        items.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+        });
     }
+}
 
 function handleScroll(e) {
     e.preventDefault();
@@ -685,16 +847,25 @@ function handleItemHover(e) {
         progressText.textContent = `${displayIndex} / ${String(CONFIG.memories.length).padStart(2, '0')}`;
     }
     
-    // Rotate cube to show this memory
+    // Update film strip to show this memory
     isHoveringList = true;
     hoveredMemoryIndex = index;
-    previewMemoryOnCube(index);
+    previewMemoryOnFilmStrip(index);
 }
 
 function handleItemLeave() {
     isHoveringList = false;
     hoveredMemoryIndex = -1;
-    resetCubeHighlight();
+    resetFrameHighlight();
+    
+    // Resume normal film strip speed
+    if (mainStripTimeline) {
+        gsap.to(mainStripTimeline, {
+            timeScale: 1,
+            duration: 0.5,
+            ease: 'power2.out'
+        });
+    }
 }
 
 // ============================================
@@ -719,66 +890,8 @@ function navigateToMemory(event, url, index) {
 // WINDOW RESIZE
 // ============================================
 function onWindowResize() {
-    const container = document.getElementById('cube-container');
-    if (!container || !camera || !renderer) return;
-    
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
-}
-
-// ============================================
-// ANIMATION LOOP - DRAMATIC MULTI-AXIS MOTION
-// ============================================
-function animate() {
-    requestAnimationFrame(animate);
-    
-    if (!cube) return;
-    
-    const time = Date.now() * 0.001;
-    
-    // DRAMATIC auto-rotation when not hovering
-    if (autoRotate && !isHoveringList) {
-        // Primary Y rotation - main spin (fast)
-        targetRotation.y += CONFIG.autoRotateSpeed;
-        
-        // X-axis tilt - dramatic front/back tilting (sidespin effect)
-        targetRotation.x = Math.sin(time * 0.8) * 0.4 + Math.sin(time * 1.3) * 0.15;
-        
-        // Z-axis rotation - dramatic roll/tilt (frontspin effect)
-        targetRotation.z = Math.sin(time * 0.5) * 0.25 + Math.cos(time * 0.7) * 0.1;
-        
-        // Occasional dramatic direction changes
-        if (Math.sin(time * 0.3) > 0.9) {
-            targetRotation.y -= CONFIG.autoRotateSpeed * 3;
-        }
-        
-        // Add periodic "flip" effect
-        if (Math.sin(time * 0.15) > 0.95) {
-            targetRotation.x += 0.1;
-        }
-    }
-    
-    // Smooth rotation interpolation for all axes
-    currentRotation.x += (targetRotation.x - currentRotation.x) * CONFIG.hoverRotateSpeed;
-    currentRotation.y += (targetRotation.y - currentRotation.y) * CONFIG.hoverRotateSpeed;
-    currentRotation.z += (targetRotation.z - currentRotation.z) * CONFIG.hoverRotateSpeed;
-    
-    // Apply rotation
-    cube.rotation.x = currentRotation.x;
-    cube.rotation.y = currentRotation.y;
-    cube.rotation.z = currentRotation.z;
-    
-    // More dramatic floating animation
-    cube.position.y = Math.sin(time * 1.2) * 0.15 + Math.sin(time * 2.1) * 0.05;
-    
-    // Subtle side-to-side drift
-    cube.position.x = Math.sin(time * 0.4) * 0.08;
-    
-    renderer.render(scene, camera);
+    // Film strip resize is handled by resizeFilmStrip()
+    // Kept for compatibility
 }
 
 // ============================================
@@ -903,7 +1016,8 @@ function animateMemoryPageEntrance() {
 document.addEventListener('DOMContentLoaded', () => {
     // Check if we're on the homepage
     if (document.getElementById('cube-container')) {
-        initThreeJS();
+        // Initialize film strip instead of Three.js cube
+        initFilmStrip();
         initMemoryList();
     }
     
@@ -931,15 +1045,21 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 /**
- * To change cube size:
- * Edit CONFIG.cubeSize (line 18)
- * Default: 4.2 (was 3.5)
+ * To change film strip speed:
+ * Edit CONFIG.mainStripSpeed (line 20)
+ * Default: 40 (pixels per second)
  */
 
 /**
- * To change rotation speed:
- * Edit CONFIG.autoRotateSpeed (line 19)
- * Default: 0.025 (much faster than before)
+ * To change background strip count:
+ * Edit CONFIG.backgroundStripCount (line 21)
+ * Default: 8
+ */
+
+/**
+ * To change highlight pause duration:
+ * Edit CONFIG.highlightPause (line 22)
+ * Default: 1500 (milliseconds)
  */
 
 /**
