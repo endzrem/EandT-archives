@@ -323,7 +323,7 @@ body {
     justify-content: center;
     overflow: hidden;
     padding: 0 3rem;
-    background: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.95) 0%, var(--bg-primary) 70%);
+    background: radial-gradient(ellipse at center, rgba(20, 20, 20, 0.8) 0%, var(--bg-primary) 70%);
 }
 
 /* Vignette Effect */
@@ -334,7 +334,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.3) 100%);
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.6) 100%);
     pointer-events: none;
     z-index: 1;
 }
