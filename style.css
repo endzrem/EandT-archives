@@ -1089,27 +1089,18 @@ a.memory-nav-button {
 
 /* Navigation container fixed to bottom */
 .memory-prev-next {
-    position: fixed;
-    left: 3rem;
-    right: 3rem;
-    bottom: 2rem;
-
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between; /* prev left, next right */
+    gap: 1rem;
 
-    padding: 0;
-    margin: 0;
-    border-top: none;
-
-    z-index: 200;
-    pointer-events: none; /* important: lets only buttons be clickable */
+    padding: 2rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
 }
 
-/* make the buttons clickable even though container ignores pointer events */
-.memory-prev-next a {
-    pointer-events: auto;
-}
+.memory-prev-next .nav-prev { margin-right: auto; }
+.memory-prev-next .nav-next { margin-left: auto; }
 
 /* ============================================
    Responsive
