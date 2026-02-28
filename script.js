@@ -6,9 +6,15 @@
  * - Animated vintage film strip displaying memory previews
  * - Background decorative film layers
  * - Infinite scroll memory list
- * - Hover triggers film strip to highlight memory
+ * - Hover triggers film strip to highlight memory (PAUSED while hovering)
  * - Background music with mute toggle
  * - Smooth cinematic animations
+ * 
+ * CHANGES MADE:
+ * - Fixed hover behavior: strip now PAUSES while hovering sidebar items
+ * - Removed date/number overlays from frames
+ * - Improved background film strips with multi-directional movement
+ * - Added proper pause/resume functions for seamless scrolling
  */
 
 // ============================================
@@ -16,9 +22,9 @@
 // ============================================
 const CONFIG = {
     // Film strip settings
-    mainStripSpeed: 40,           // Pixels per second for auto-scroll
-    backgroundStripCount: 8,      // Number of decorative background strips
-    highlightPause: 1500,         // ms to pause on highlight
+    mainStripSpeed: 45,           // Pixels per second for auto-scroll (slightly faster)
+    backgroundStripCount: 12,     // Number of decorative background strips (increased)
+    highlightPause: 0,            // No auto-resume timeout - wait for mouseleave
     
     // Audio settings
     audioVolume: 0.3,  // 0.0 to 1.0 (30% volume)
@@ -90,6 +96,7 @@ let bgStripTimelines = [];
 let frameHeight = 0;
 let isFilmStripPaused = false;
 let currentHighlightedIndex = -1;
+let currentStripY = 0; // Track current Y position for seamless resume
 
 // Infinite scroll variables
 let scrollPosition = 0;
@@ -213,6 +220,7 @@ function animatePageEntrance() {
         ease: 'power3.out'
     });
     
+    // Note: hero-letter animation kept but hero-typography is hidden via CSS
     gsap.from('.hero-letter', {
         y: 100,
         opacity: 0,
@@ -358,58 +366,97 @@ function initFilmStrip() {
 
 /**
  * Create decorative background film strips
+ * IMPROVED: Larger, more visible, multi-directional movement
  */
 function createBackgroundStrips(count) {
     // Remove existing background strips
     document.querySelectorAll('.bg-film-layer').forEach(el => el.remove());
     bgStripTimelines = [];
     
+    const directions = ['left-right', 'right-left', 'top-bottom', 'bottom-top', 'diagonal', 'diagonal-reverse'];
+    
     for (let i = 0; i < count; i++) {
         const strip = document.createElement('div');
         strip.className = 'bg-film-layer';
         
-        // Randomize position and styling
-        const isDiagonal = Math.random() > 0.6;
-        if (isDiagonal) {
-            strip.classList.add(Math.random() > 0.5 ? 'diagonal' : 'diagonal-reverse');
-        }
+        // Assign direction (cycle through directions)
+        const direction = directions[i % directions.length];
+        strip.classList.add(direction);
         
         const stripInner = document.createElement('div');
         stripInner.className = 'bg-film-strip';
         strip.appendChild(stripInner);
         
-        // Position randomly
-        const topPos = Math.random() * 100;
-        strip.style.top = `${topPos}%`;
-        strip.style.left = '-100%';
-        strip.style.width = '300%';
+        // Position based on direction
+        if (direction === 'top-bottom' || direction === 'bottom-top') {
+            strip.style.left = `${(i / count) * 100}%`;
+            strip.style.top = direction === 'top-bottom' ? '-20%' : '120%';
+            strip.style.width = '80px';
+            strip.style.height = '150%';
+        } else if (direction === 'diagonal' || direction === 'diagonal-reverse') {
+            strip.style.left = '-20%';
+            strip.style.top = `${Math.random() * 80}%`;
+            strip.style.width = '150%';
+            strip.style.height = '100px';
+        } else {
+            // Horizontal directions
+            strip.style.left = '-20%';
+            strip.style.top = `${(i / count) * 100}%`;
+            strip.style.width = '150%';
+            strip.style.height = '80px';
+        }
         
-        // Random opacity and blur
-        const opacity = 0.03 + Math.random() * 0.09;
-        const blur = 1 + Math.random() * 2;
+        // Higher opacity and less blur for visibility
+        const opacity = 0.08 + (Math.random() * 0.12); // 0.08 - 0.20
+        const blur = 0.5 + (Math.random() * 1.0); // 0.5 - 1.5px
         strip.style.opacity = opacity;
-        strip.style.filter = `blur(${blur}px) grayscale(90%)`;
+        strip.style.filter = `blur(${blur}px) grayscale(100%) saturate(0.3)`;
+        strip.style.mixBlendMode = 'multiply';
         
         document.body.appendChild(strip);
         
         // Create GSAP animation for this strip
-        const duration = 40 + Math.random() * 100; // 40-140 seconds
-        const direction = Math.random() > 0.5 ? 1 : -1;
+        const duration = 30 + Math.random() * 60; // 30-90 seconds
         
         const tl = gsap.timeline({ repeat: -1, ease: 'none' });
         
-        if (direction === 1) {
-            // Left to right
-            tl.fromTo(strip, 
-                { x: '-100%' },
-                { x: '100%', duration: duration, ease: 'none' }
-            );
-        } else {
-            // Right to left
-            tl.fromTo(strip,
-                { x: '100%' },
-                { x: '-100%', duration: duration, ease: 'none' }
-            );
+        switch (direction) {
+            case 'left-right':
+                tl.fromTo(strip, 
+                    { x: '-100%' },
+                    { x: '100%', duration: duration, ease: 'none' }
+                );
+                break;
+            case 'right-left':
+                tl.fromTo(strip,
+                    { x: '100%' },
+                    { x: '-100%', duration: duration, ease: 'none' }
+                );
+                break;
+            case 'top-bottom':
+                tl.fromTo(strip,
+                    { y: '-100%' },
+                    { y: '100%', duration: duration * 1.5, ease: 'none' }
+                );
+                break;
+            case 'bottom-top':
+                tl.fromTo(strip,
+                    { y: '100%' },
+                    { y: '-100%', duration: duration * 1.5, ease: 'none' }
+                );
+                break;
+            case 'diagonal':
+                tl.fromTo(strip,
+                    { x: '-50%', y: '-50%' },
+                    { x: '50%', y: '50%', duration: duration, ease: 'none' }
+                );
+                break;
+            case 'diagonal-reverse':
+                tl.fromTo(strip,
+                    { x: '50%', y: '-50%' },
+                    { x: '-50%', y: '50%', duration: duration, ease: 'none' }
+                );
+                break;
         }
         
         bgStripTimelines.push(tl);
@@ -436,11 +483,17 @@ function createMainStrip() {
     grainOverlay.className = 'film-grain-overlay';
     stage.appendChild(grainOverlay);
     
-    // Create main film strip container
+    // Create viewport (visible window)
+    const viewport = document.createElement('div');
+    viewport.className = 'main-film-viewport';
+    viewport.id = 'main-film-viewport';
+    stage.appendChild(viewport);
+    
+    // Create main film strip container (inside viewport)
     const strip = document.createElement('div');
     strip.className = 'main-film-strip';
     strip.id = 'main-film-strip';
-    stage.appendChild(strip);
+    viewport.appendChild(strip);
     
     container.appendChild(stage);
 }
@@ -448,6 +501,7 @@ function createMainStrip() {
 /**
  * Populate the main strip with memory frames
  * Creates two sets (A and B) for seamless looping
+ * REMOVED: Date and number overlays from frames
  */
 function populateMainStripFrames() {
     const strip = document.getElementById('main-film-strip');
@@ -494,6 +548,7 @@ function populateMainStripFrames() {
 
 /**
  * Create a single film frame element
+ * REMOVED: Frame number and date overlays (only alt text for accessibility)
  */
 function createFilmFrame(memory, index, setId) {
     const frame = document.createElement('div');
@@ -510,21 +565,12 @@ function createFilmFrame(memory, index, setId) {
     // Image
     const img = document.createElement('img');
     img.src = memory.image;
-    img.alt = memory.title;
+    img.alt = memory.title; // Accessibility: alt text from memory title
     img.loading = 'lazy';
     frame.appendChild(img);
     
-    // Frame number
-    const frameNumber = document.createElement('span');
-    frameNumber.className = 'film-frame-number';
-    frameNumber.textContent = String(index + 1).padStart(2, '0');
-    frame.appendChild(frameNumber);
-    
-    // Frame date
-    const frameDate = document.createElement('span');
-    frameDate.className = 'film-frame-date';
-    frameDate.textContent = memory.date;
-    frame.appendChild(frameDate);
+    // REMOVED: Frame number overlay
+    // REMOVED: Frame date overlay
     
     // Sprocket holes decoration
     const sprockets = document.createElement('div');
@@ -536,6 +582,7 @@ function createFilmFrame(memory, index, setId) {
 
 /**
  * Animate the main film strip with continuous scrolling
+ * Uses GSAP timeline with repeat:-1 for seamless loop
  */
 function animateMainStrip() {
     const strip = document.getElementById('main-film-strip');
@@ -546,6 +593,11 @@ function animateMainStrip() {
     // Calculate total height of one set
     const setHeight = setA.offsetHeight;
     
+    // Kill any existing timeline
+    if (mainStripTimeline) {
+        mainStripTimeline.kill();
+    }
+    
     // Create continuous scrolling animation
     mainStripTimeline = gsap.to(strip, {
         y: -setHeight,
@@ -553,79 +605,121 @@ function animateMainStrip() {
         ease: 'none',
         repeat: -1,
         force3D: true,
+        onUpdate: function() {
+            // Track current Y position for seamless resume
+            currentStripY = gsap.getProperty(strip, 'y');
+        },
         onRepeat: () => {
             // Reset position seamlessly
             gsap.set(strip, { y: 0 });
+            currentStripY = 0;
         }
     });
 }
 
 /**
+ * PAUSE the main film strip timeline
+ * Called when hovering a sidebar item
+ */
+function pauseMainStrip() {
+    if (mainStripTimeline) {
+        mainStripTimeline.pause();
+        isFilmStripPaused = true;
+    }
+}
+
+/**
+ * RESUME the main film strip timeline from current position
+ * Called on mouseleave from sidebar item
+ * Ensures smooth continuation without jumps
+ */
+function resumeMainStrip() {
+    if (mainStripTimeline) {
+        // Resume from current position - no jump
+        mainStripTimeline.play();
+        isFilmStripPaused = false;
+    }
+}
+
+/**
  * Preview a memory on the film strip
  * Called when hovering a sidebar item
+ * FIXED: Now properly PAUSES the strip while hovering
  */
 function previewMemoryOnFilmStrip(index) {
     const strip = document.getElementById('main-film-strip');
     const stage = document.getElementById('main-film-stage');
+    const viewport = document.getElementById('main-film-viewport');
     
-    if (!strip || !stage) return;
+    if (!strip || !stage || !viewport) return;
     
-    // Pause or slow down the animation
-    if (mainStripTimeline) {
-        mainStripTimeline.timeScale(0.2); // Slow to 20% speed
+    // PAUSE the animation immediately (don't just slow down)
+    pauseMainStrip();
+    
+    // Get viewport height for centering calculation
+    const viewportHeight = viewport.offsetHeight;
+    
+    // Calculate frame height if not already known
+    if (frameHeight === 0) {
+        const firstFrame = strip.querySelector('.film-frame');
+        if (firstFrame) {
+            frameHeight = firstFrame.offsetHeight;
+        }
     }
     
-    // Calculate target position to center the frame
-    const stageHeight = stage.offsetHeight;
-    const centerOffset = stageHeight / 2 - frameHeight / 2;
+    const centerOffset = viewportHeight / 2 - frameHeight / 2;
     
     // Get current Y position
     const currentY = gsap.getProperty(strip, 'y');
     
     // Calculate the position of the target frame within the strip
-    // Each set has CONFIG.memories.length frames
     const framesPerSet = CONFIG.memories.length;
     const targetFrameY = index * frameHeight;
     
-    // Find the nearest occurrence of this frame (could be in set A or B)
-    const setHeight = framesPerSet * frameHeight;
+    // Get set height
+    const setA = document.getElementById('film-set-a');
+    const setHeight = setA ? setA.offsetHeight : framesPerSet * frameHeight;
     
-    // Calculate positions for both occurrences
+    // Calculate positions for both occurrences (set A and set B)
     const posA = targetFrameY;
     const posB = targetFrameY + setHeight;
     
-    // Determine which occurrence is closer to center
-    let targetY;
+    // Determine which occurrence is closer to center based on current view
     const currentVisibleY = -currentY + centerOffset;
     
-    // Find the closest occurrence to center
     const distA = Math.abs(posA - currentVisibleY);
     const distB = Math.abs(posB - currentVisibleY);
     
+    let targetY;
     if (distA <= distB) {
         targetY = -(posA - centerOffset);
     } else {
         targetY = -(posB - centerOffset);
     }
     
-    // Animate to target position
+    // Animate to target position (center the frame)
     gsap.to(strip, {
         y: targetY,
-        duration: 0.7,
+        duration: 0.75,
         ease: 'power3.out',
         force3D: true,
         onComplete: () => {
-            // Resume normal speed after pause duration
-            setTimeout(() => {
-                if (!isHoveringList && mainStripTimeline) {
-                    mainStripTimeline.timeScale(1);
-                }
-            }, CONFIG.highlightPause);
+            // Update tracked position
+            currentStripY = targetY;
+            // Strip stays PAUSED while hover continues
         }
     });
     
     // Highlight the frame
     highlightFrame(index);
+}
+
+/**
+ * Clear the preview - remove highlight
+ * Called when mouse leaves sidebar item
+ */
+function clearPreview() {
+    resetFrameHighlight();
 }
 
 /**
@@ -638,7 +732,7 @@ function highlightFrame(index) {
     });
     
     // Add highlight to frames with matching index
-    document.querySelectorAll(`.film-frame[data-index="${index}"]`).forEach(frame => {
+    document.querySelectorAll(`.film-frame[data-index="${index}"`).forEach(frame => {
         frame.classList.add('film-highlight');
     });
     
@@ -701,7 +795,8 @@ function initMemoryList() {
                data-memory="${memory.id}" 
                data-index="${originalIndex}"
                data-display-index="${displayNumber}"
-               onclick="navigateToMemory(event, '${memory.url}', ${originalIndex})">
+               onclick="navigateToMemory(event, '${memory.url}', ${originalIndex})"
+               tabindex="0">
                 <span class="memory-number">${displayNumber}</span>
                 <span class="memory-title">${memory.title}</span>
             </a>
@@ -742,10 +837,15 @@ function initMemoryList() {
     // Add hover listeners to items
     const items = scrollContent.querySelectorAll('.memory-item');
     items.forEach(item => {
+        // Mouse events
         item.addEventListener('mouseenter', handleItemHover);
         item.addEventListener('mouseleave', handleItemLeave);
         
-        // Add focus support for accessibility
+        // Pointer events (covers both mouse and touch)
+        item.addEventListener('pointerenter', handleItemHover);
+        item.addEventListener('pointerleave', handleItemLeave);
+        
+        // Keyboard accessibility
         item.addEventListener('focus', handleItemHover);
         item.addEventListener('blur', handleItemLeave);
     });
@@ -826,6 +926,10 @@ function updateScroll() {
     }
 }
 
+/**
+ * Handle hover on memory item
+ * FIXED: Now properly pauses film strip and keeps it paused while hovering
+ */
 function handleItemHover(e) {
     const item = e.currentTarget;
     const index = parseInt(item.dataset.index);
@@ -853,19 +957,17 @@ function handleItemHover(e) {
     previewMemoryOnFilmStrip(index);
 }
 
+/**
+ * Handle mouseleave from memory item
+ * FIXED: Now properly resumes film strip from current position
+ */
 function handleItemLeave() {
     isHoveringList = false;
     hoveredMemoryIndex = -1;
-    resetFrameHighlight();
+    clearPreview();
     
-    // Resume normal film strip speed
-    if (mainStripTimeline) {
-        gsap.to(mainStripTimeline, {
-            timeScale: 1,
-            duration: 0.5,
-            ease: 'power2.out'
-        });
-    }
+    // Resume film strip from current position (smooth, no jump)
+    resumeMainStrip();
 }
 
 // ============================================
@@ -1011,6 +1113,48 @@ function animateMemoryPageEntrance() {
 }
 
 // ============================================
+// MEMORY PAGE NAVIGATION BUTTONS
+// Styles the prev/next navigation links as buttons
+// ============================================
+function styleMemoryNavigationButtons() {
+    // Find navigation links in memory pages
+    const navLinks = document.querySelectorAll('.memory-nav-links a, .memory-prev-next a, [class*="prev"], [class*="next"]');
+    
+    navLinks.forEach(link => {
+        // Check if already styled
+        if (link.classList.contains('memory-nav-button')) return;
+        
+        // Add button class
+        link.classList.add('memory-nav-button');
+        
+        // Determine if prev or next based on text content or href
+        const text = link.textContent.toLowerCase();
+        const isPrev = text.includes('prev') || text.includes('back') || text.includes('←');
+        const isNext = text.includes('next') || text.includes('forward') || text.includes('→');
+        
+        if (isPrev) {
+            link.classList.add('nav-prev');
+            // Add arrow icon if not present
+            if (!link.querySelector('.nav-arrow')) {
+                const arrow = document.createElement('span');
+                arrow.className = 'nav-arrow';
+                arrow.innerHTML = '←';
+                link.prepend(arrow);
+            }
+        } else if (isNext) {
+            link.classList.add('nav-next');
+            // Add arrow icon if not present
+            if (!link.querySelector('.nav-arrow')) {
+                const arrow = document.createElement('span');
+                arrow.className = 'nav-arrow';
+                arrow.innerHTML = '→';
+                link.appendChild(arrow);
+            }
+        }
+    });
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -1026,6 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initLightbox();
         animateMemoryPageEntrance();
         initAudio();
+        styleMemoryNavigationButtons(); // Style prev/next buttons
     }
     
     // Window resize
@@ -1047,19 +1192,19 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
  * To change film strip speed:
  * Edit CONFIG.mainStripSpeed (line 20)
- * Default: 40 (pixels per second)
+ * Default: 45 (pixels per second)
  */
 
 /**
  * To change background strip count:
  * Edit CONFIG.backgroundStripCount (line 21)
- * Default: 8
+ * Default: 12
  */
 
 /**
- * To change highlight pause duration:
- * Edit CONFIG.highlightPause (line 22)
- * Default: 1500 (milliseconds)
+ * To change highlight behavior:
+ * The strip now PAUSES on hover and resumes on mouseleave
+ * No timeout delay - immediate pause/resume
  */
 
 /**
