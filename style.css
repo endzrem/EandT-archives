@@ -843,6 +843,7 @@ body {
 /* Memory Content Section */
 .memory-content {
     padding: 4rem 3rem;
+    padding-bottom: 8rem; /* extra space so fixed bottom buttons don't cover content */
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -1086,14 +1087,28 @@ a.memory-nav-button {
     margin-left: 0.25rem;
 }
 
-/* Navigation container for memory pages */
+/* Navigation container fixed to bottom */
 .memory-prev-next {
+    position: fixed;
+    left: 3rem;
+    right: 3rem;
+    bottom: 2rem;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem 0;
-    margin-top: 2rem;
-    border-top: 1px solid var(--border-color);
+
+    padding: 0;
+    margin: 0;
+    border-top: none;
+
+    z-index: 200;
+    pointer-events: none; /* important: lets only buttons be clickable */
+}
+
+/* make the buttons clickable even though container ignores pointer events */
+.memory-prev-next a {
+    pointer-events: auto;
 }
 
 /* ============================================
