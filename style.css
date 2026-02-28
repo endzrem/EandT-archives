@@ -624,6 +624,8 @@ body {
    QUOTE SECTION
    ============================================ */
 .quote-section {
+    position: relative;
+    z-index: 5;
     padding: var(--spacing-xl) 3rem;
     text-align: center;
     background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
@@ -667,7 +669,7 @@ body {
    ============================================ */
 .main-footer {
     position: relative;  /* Required for z-index to work */
-    z-index: 100;
+    z-index: 5;
     padding: 3rem;
     text-align: center;
     border-top: 1px solid var(--border-color);
