@@ -407,8 +407,8 @@ function createBackgroundStrips(count) {
         }
         
         // Higher opacity and less blur for visibility
-        const opacity = 0.15 + (Math.random() * 0.15); // 0.08 - 0.20
-        const blur = 0.3 + (Math.random() * 0.7); // 0.5 - 1.5px
+        const opacity = 0.3 + (Math.random() * 0.3); // 0.08 - 0.20
+        const blur = 0.3 + (Math.random() * 0.3); // 0.5 - 1.5px
         strip.style.opacity = opacity;
         strip.style.filter = `blur(${blur}px) grayscale(100%) saturate(0.3)`;
         strip.style.mixBlendMode = 'multiply';
