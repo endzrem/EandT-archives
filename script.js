@@ -70,6 +70,13 @@ const CONFIG = {
             date: 'October 1, 2024',
             image: 'assets/images/cube-jfw.JPG',
             url: 'memories/first-photo.html'
+        },
+        {
+            id: '8th mensiv',
+            title: '8th mensiv',
+            date: 'March 27, 2026',
+            image: 'assets/images/8_mensiv_1.JPG',
+            url: 'memories/8th-mensiv.html'
         }
     ]
 };
