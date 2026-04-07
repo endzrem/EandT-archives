@@ -73,7 +73,7 @@ const CONFIG = {
         },
         {
             id: '8th mensiv',
-            title: '8th mensiv',
+            title: '8th Mensiversary',
             date: 'March 27, 2026',
             image: 'assets/images/cube-8th-mensiv.jpg',
             url: 'memories/8th-mensiv.html'
